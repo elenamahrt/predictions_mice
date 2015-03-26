@@ -2,28 +2,33 @@
 close all
 clear variables
 
-fid=fopen('mice_FC.txt');
-mousedata = textscan(fid, '%s %s %s %s %s %s %s %s %s %s %s', 82);
+fid=fopen('mice.txt'); %where test nums are stored
+mousedata = textscan(fid, '%s %s %s %s %s %s %s %s %s %s %s', 82); %change last number to analyze ALL cells/rows
 fclose(fid);
 numMice = length(mousedata{1,1});
-micePrediction = zeros(numMice, 82);
-miceError = zeros(numMice, 82);
-% sndType = '.call1';
-sndType = '.wav';
+micePrediction = zeros(numMice, 82); %change last number to analyze ALL cells/rows
+miceError = zeros(numMice, 82);%change last number to analyze ALL cells/rows
+sndType = '.call1'; %assuming is stimulus file type?
+% sndType = '.wav'; 
 
-for mouse = 1:numMice
-% for mouse = 10:10
-    responsePrediction = zeros(49,100);
+% for mouse = 1:numMice  
+%uncomment above when you want to run whole batch of mice
+for mouse = 10:10 %comment whenwhen you want to run whole batch of mice
+    responsePrediction = zeros(49,100); %what does this do?
     %Create a preferences structure for the desired experimental data
-    prefs = GeneratePreferences('Mouse', char(mousedata{1,1}(mouse)),... 
-                                         char(mousedata{1,11}(mouse)),...
-                                         char(mousedata{1,2}(mouse)));
-    % prefs = GeneratePreferences('Mouse', '493', 'b', '424');
+%     prefs = GeneratePreferences('Mouse', char(mousedata{1,1}(mouse)),... 
+%                                          char(mousedata{1,11}(mouse)),...
+%                                          char(mousedata{1,2}(mouse))); %uncomment this when you are ready to analyze whole batch
+    prefs = GeneratePreferences('Mouse', '493', 'b', '424'); 
+    %Use this as test file; comment out when you are ready to analyze batch
+    %of mice
+    
     %Set the threshold used for spike detection. 0.11 is the default.
-    prefs.spike_time_peak_threshold = str2num(char(mousedata{1,10}(mouse)));
+    prefs.spike_time_peak_threshold = str2num(char(mousedata{1,10}(mouse))); %Did Pat have spike thresholds saved in 10th column?
     %Extract XML metadata and conver to to Matlab structure
     experiment_data = LoadExperimentData(prefs);
     experiment_data.pst_filename 
+   
     %-------------------
     % Test Visualization
     %-------------------
@@ -61,6 +66,8 @@ for mouse = 1:numMice
 % % VisualizeTraceData(experiment_data,prefs,test_num,trace_num,[0 0 0 1 1 1 1 0 0 0]);
 % %  VisualizeTraceData(experiment_data,prefs,test_num,trace_num,[0 0 0 0 0 0 0 1 1 0]);
 % % end
+    
+
     % --------------------------------
     % Model Generation and Prediction
     % --------------------------------
@@ -90,6 +97,8 @@ for mouse = 1:numMice
         for testNum = firstVocal:lastVocal
             vocalStr = experiment_data.test(1,testNum).trace(1,1).stimulus.vocal_call_file;
             vocalNum=0;
+ %%%Keep this list of Pat's stimuli in case you want to run them for your
+ %%%data. You have a few cells with these stimuli as well%%%
             if strcmp(vocalStr, 'A4-11-sylb10.call1') vocalNum=1; end
 %             if strcmp(vocalStr, 'C5-09-sylb149.call1') vocalNum=2; end
 %             if strcmp(vocalStr, 'C5-10-sylb79.call1') vocalNum=3; end
