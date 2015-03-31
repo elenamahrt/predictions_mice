@@ -10,8 +10,6 @@ fileID=fopen('stimuli.txt');
 stimdata = textscan(fileID, '%s', 1); %Change the last number to reflect the total number of stimuli
 fclose(fileID);
 
-mousepath = {'C:\Users\emahrt\Documents\ElectrophysiologyProjects\TestData\Mouse1327b'} %where your data is located. Redefine this in an inner loop to process batches of data
-
 numMice = length(mousedata{1,1});
 micePrediction = zeros(numMice, 1); %This makes an array the same size as the number of files to be analyzed and fills it with zeros  
 %change last number to analyze ALL cells/rows
@@ -28,30 +26,30 @@ for mouse = 1:1 %comment when you want to run whole batch of mice
     %     prefs = GeneratePreferences('Mouse', char(mousedata{1,1}(mouse)),...
     %                                          char(mousedata{1,11}(mouse)),...
     %                                          char(mousedata{1,2}(mouse))); %uncomment this when you are ready to analyze whole batch
-%     prefs = GeneratePreferences('Mouse', '1327', 'b', '187');
-    prefs = GeneratePreferences(mousepath, 1);
+    prefs = GeneratePreferences('Mouse', '1327', 'b', '187');
+%     prefs = GeneratePreferences(mousepath, 1);
     %function prefs = GeneratePreferences(animal_number, experiment_letter, cell_depth)
     %Use this as test file; comment out when you are ready to analyze batch
     %of mice
     
     %Set the threshold used for spike detection. 0.11 is the default.
     prefs.spike_time_peak_threshold = str2num(char(mousedata{1,10}(mouse))); %assuming spike thresholds should be saved in 10th column
-    prefs.spike_time_filter_cutoff = 1;
+%     prefs.spike_time_filter_cutoff = 1; %%%WHAT IS THIS AND WHAT ARE THE RIGHT VALUES FOR THIS?
     %Extract XML metadata and convert to to Matlab structure
     experiment_data = LoadExperimentData(prefs); %Is this where it actually loads the .raw file? Check what 'LoadExperimentData' does
     experiment_data.pst_filename
     
     %-------------------
-    % Test Visualization (I think this makes Tuning curves?)
+    % Test Visualization 
     %-------------------
     %Specify the test number to visualize, this is a one tone test
-    freqtest_num = str2num(char(mousedata{1,8}(mouse)));    %Generate contour plot of single frequency tuning curve
+    freqtest_num = str2num(char(mousedata{1,8}(mouse)))    %Generate contour plot of single frequency tuning curve
         %Tuning curves are in column 8
         
     if freqtest_num ~= 0
         %         figname = ['/Users/robertpa/Desktop/mouseDataFigs/' prefs.cell_id '_freq.pdf'];
-%         figname = ['C:\Users\emahrt\Documents\ElectrophysiologyProjects\TestData' prefs.cell_id '_freq.pdf'];
-        figname = [mousepath prefs.cell_id '_freq.pdf'];
+        figname = ['C:\Users\emahrt\Documents\ElectrophysiologyProjects\TestData' prefs.cell_id '_freq.pdf'];
+%         figname = [mousepath  prefs.cell_id '_freq.pdf'];
         
         [unique_frequencies, ...
             unique_attenuations, ...
@@ -101,7 +99,7 @@ for mouse = 1:1 %comment when you want to run whole batch of mice
         %     spontRate = model.spontaneous_rate;
         numStr = num2str(train_data);
         %         figname = ['/Users/robertpa/Desktop/mouseDataFigs/' prefs.cell_id '_model1_' numStr '.pdf'];
-        figname = [mousepath prefs.cell_id '_model1_' numStr '.pdf'];
+        figname = ['C:\Users\emahrt\Documents\ElectrophysiologyProjects\TestData' prefs.cell_id '_model1_' numStr '.pdf'];
         saveas(gcf,figname);
         close all
         
@@ -143,7 +141,7 @@ for mouse = 1:1 %comment when you want to run whole batch of mice
                         trace_to_view,[]);
                     numStr = num2str(test_to_view);
                     %                     figname = ['/Users/robertpa/Desktop/mouseDataFigs/' prefs.cell_id '_vocalL_' numStr '.pdf'];
-                    figname = [mousepath prefs.cell_id '_vocalL_' numStr '.pdf'];
+                    figname = ['C:\Users\emahrt\Documents\ElectrophysiologyProjects\TestData' prefs.cell_id '_vocalL_' numStr '.pdf'];
                     saveas(gcf,figname);
                     %             close all
                     close force all
