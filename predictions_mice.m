@@ -7,7 +7,7 @@ mousedata = textscan(fid, '%s %s %s %s %s %s %s %s %s %s %s', 1); %change last n
 fclose(fid);
 
 fileID=fopen('stimuli.txt');
-stimdata = textscan(fileID, '%s', 1); %Change the last number to reflect the total number of stimuli
+stimdata = textscan(fileID, '%s', 82); %Change the last number to reflect the total number of stimuli
 fclose(fileID);
 
 numMice = length(mousedata{1,1});
@@ -23,12 +23,12 @@ sndType = '.call1'; %assuming is stimulus file type?
 for mouse = 1:1 %comment when you want to run whole batch of mice
     responsePrediction = zeros(49,100); %assuming this creates an array filled with zeros that is same size as the number of files to be analyzed
     %Create a preferences structure for the desired experimental data
-    %     prefs = GeneratePreferences('Mouse', char(mousedata{1,1}(mouse)),...
+    %     prefs = GeneratePreferences_EM('Mouse', char(mousedata{1,1}(mouse)),...
     %                                          char(mousedata{1,11}(mouse)),...
     %                                          char(mousedata{1,2}(mouse))); %uncomment this when you are ready to analyze whole batch
-    prefs = GeneratePreferences('Mouse', '1327', 'b', '187');
-%     prefs = GeneratePreferences(mousepath, 1);
-    %function prefs = GeneratePreferences(animal_number, experiment_letter, cell_depth)
+    prefs = GeneratePreferences_EM('Mouse', '1327', 'b', '187');
+%     prefs = GeneratePreferences_EM(mousepath, 1);
+    %function prefs = GeneratePreferences_EM(animal_number, experiment_letter, cell_depth)
     %Use this as test file; comment out when you are ready to analyze batch
     %of mice
     
@@ -43,7 +43,7 @@ for mouse = 1:1 %comment when you want to run whole batch of mice
     % Test Visualization 
     %-------------------
     %Specify the test number to visualize, this is a one tone test
-    freqtest_num = str2num(char(mousedata{1,8}(mouse)))    %Generate contour plot of single frequency tuning curve
+    freqtest_num = str2num(char(mousedata{1,8}(mouse)));    %Generate contour plot of single frequency tuning curve
         %Tuning curves are in column 8
         
     if freqtest_num ~= 0
@@ -64,8 +64,8 @@ for mouse = 1:1 %comment when you want to run whole batch of mice
     % VisualizeTestData(experiment_data,prefs,test_num,[0 1 0 0 1])
     %--------------------------------------
     %Specify the test number to visualize, this is a two-tone test
-    firstVocal = str2num(char(mousedata{1,6}(mouse)));
-    lastVocal = str2num(char(mousedata{1,7}(mouse)));
+    firstVocal = str2num(char(mousedata{1,6}(mouse)))
+    lastVocal = str2num(char(mousedata{1,7}(mouse)))
     
     % %--------------------
     % % Trace Visualization %WHAT DOES THIS DO??
