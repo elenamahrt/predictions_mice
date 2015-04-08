@@ -37,17 +37,24 @@ if exist('animal_type','var')
 
     %Path definitions
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    prefs.bat2matlab_directory = 'C:\Users\emahrt\Documents\ElectrophysiologyProjects'; 
+% Swap out the following path definitions for the inline paths in code
+% below this section
+      basePath = 'C:\Users\emahrt\Documents\ElectrophysiologyProjects'
+      stimPath = '\FreqJumpProject_Electrophysiology_Stimuli\AllStim_EverPresented'
+      dataPath = '\FreqJumpProject_ElectrophysiologyData\'
+      extractDataPath = '\FreqJumpProject_ElectrophysiologyData\Data\ExtractedData\'
+
+    prefs.bat2matlab_directory = basePath; 
     if strmatch('Bat',animal_type)
-        prefs.audio_directory = [prefs.bat2matlab_directory '\FreqJumpProject_Electrophysiology_Stimuli\AllStim_EverPresented'];
-        base_batlab_data_path = [prefs.bat2matlab_directory '\FreqJumpProject_ElectrophysiologyData\'];
+        prefs.audio_directory = [prefs.bat2matlab_directory stimPath]; 
+        base_batlab_data_path = [prefs.bat2matlab_directory dataPath];
     elseif strmatch('Mouse',animal_type)
-        prefs.audio_directory = [prefs.bat2matlab_directory '\FreqJumpProject_Electrophysiology_Stimuli\AllStim_EverPresented'];
-        base_batlab_data_path = [prefs.bat2matlab_directory '\FreqJumpProject_ElectrophysiologyData\'];
+        prefs.audio_directory = [prefs.bat2matlab_directory stimPath]; 
+        base_batlab_data_path = [prefs.bat2matlab_directory dataPath];
     else
         error('Incorrect animal type specified in GeneratePreferences()');
     end
-    prefs.Bat2Matlab_data_filepath = [prefs.bat2matlab_directory '\FreqJumpProject_ElectrophysiologyData\Data\ExtractedData\' animal_type animal_string experiment_string '.mat'];
+    prefs.Bat2Matlab_data_filepath = [prefs.bat2matlab_directory extractDataPath animal_type animal_string experiment_string '.mat'];
     prefs.raw_data_filepath = [base_batlab_data_path '' animal_type '' animal_string '\' animal_type animal_string experiment_string '.raw'];
 %    prefs.xml_data_filepath = [base_batlab_data_path '' animal_type '' animal_string '\' animal_type animal_string experiment_string '-alltests.xml'];
     prefs.output_data_filepath = [prefs.bat2matlab_directory '\Output\' animal_type '\' animal_type animal_string experiment_string '_' cell_string];
@@ -188,5 +195,5 @@ if isempty(figure_exists)
     close;
 end
 
-    
+% clear cache at end! find function that deletes files. Delete at this path % C:\Users\emahrt\Documents\ElectrophysiologyProjects\Output\Mouse\Mouse1327b_187    
 

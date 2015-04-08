@@ -3,7 +3,7 @@ close all
 clear variables
 clear all
 
-savepath = 'C:\Users\emahrt\Documents\ElectrophysiologyProjects\TestData'
+savepath = 'C:\Users\emahrt\Documents\mice_predictions\'
 
 fid=fopen('mice.txt'); %where test nums are stored
 mousedata = textscan(fid, '%s %s %s %s %s %s %s %s %s %s %s', 1); %change last number to total number of cells in mice.txt to analyze ALL cells/rows
@@ -173,7 +173,7 @@ for mouse = 1:1 %comment when you want to run whole batch of mice
             end
         end
     end
-    dlmwrite((strcat(savepath,'\responsePrediction.txt')),responsePrediction, 'delimiter', '\t', 'precision', '%.4f', '-append')
-    dlmwrite('C:\Users\emahrt\Documents\ElectrophysiologyProjects\TestData\micePrediction.txt', micePrediction, 'delimiter', '\t', 'precision', '%.4f')
-    dlmwrite('C:\Users\emahrt\Documents\ElectrophysiologyProjects\TestData\micePredictError.txt', miceError, 'delimiter', '\t', 'precision', '%.4f')
+    dlmwrite('C:\Users\emahrt\Documents\mice_predictions\responsePrediction.txt', responsePrediction, 'delimiter', '\t', 'precision', '%.4f', '-append')
+    dlmwrite('C:\Users\emahrt\Documents\mice_predictions\micePrediction.txt', micePrediction, 'delimiter', '\t', 'precision', '%.4f')
+    dlmwrite('C:\Users\emahrt\Documents\mice_predictions\micePredictError.txt', miceError, 'delimiter', '\t', 'precision', '%.4f')
 end
