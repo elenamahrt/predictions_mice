@@ -1,14 +1,18 @@
 % predictions_mice
 close all
 clear variables
+clear all
+
+savepath = 'C:\Users\emahrt\Documents\ElectrophysiologyProjects\TestData'
 
 fid=fopen('mice.txt'); %where test nums are stored
 mousedata = textscan(fid, '%s %s %s %s %s %s %s %s %s %s %s', 1); %change last number to total number of cells in mice.txt to analyze ALL cells/rows
 fclose(fid);
 
-fileID=fopen('stimuli.txt');
-stimdata = textscan(fileID, '%s', 82); %Change the last number to reflect the total number of stimuli
-fclose(fileID);
+%%%Uncomment below when you want to add in the txt file of stimuli rather than having them inline below
+% fileID=fopen('stimuli.txt'); 
+% stimdata = textscan(fileID, '%s', 82); %Change the last number to reflect the total number of stimuli
+% fclose(fileID);
 
 numMice = length(mousedata{1,1});
 micePrediction = zeros(numMice, 1); %This makes an array the same size as the number of files to be analyzed and fills it with zeros  
@@ -48,7 +52,7 @@ for mouse = 1:1 %comment when you want to run whole batch of mice
         
     if freqtest_num ~= 0
         %         figname = ['/Users/robertpa/Desktop/mouseDataFigs/' prefs.cell_id '_freq.pdf'];
-        figname = ['C:\Users\emahrt\Documents\ElectrophysiologyProjects\TestData' prefs.cell_id '_freq.pdf'];
+        figname = [savepath prefs.cell_id '_freq.pdf'];
 %         figname = [mousepath  prefs.cell_id '_freq.pdf'];
         
         [unique_frequencies, ...
@@ -94,12 +98,12 @@ for mouse = 1:1 %comment when you want to run whole batch of mice
     if freqtest_num ~= 0
         train_data = freqtest_num;
         %Create the model
-        [constrModel model] = CreateModel(experiment_data,prefs,train_data);
+        [constrModel, model] = CreateModel(experiment_data,prefs,train_data);
         %     model = CreateModel(experiment_data,prefs,train_data);
         %     spontRate = model.spontaneous_rate;
         numStr = num2str(train_data);
         %         figname = ['/Users/robertpa/Desktop/mouseDataFigs/' prefs.cell_id '_model1_' numStr '.pdf'];
-        figname = ['C:\Users\emahrt\Documents\ElectrophysiologyProjects\TestData' prefs.cell_id '_model1_' numStr '.pdf'];
+        figname = [savepath prefs.cell_id '_model1_' numStr '.pdf'];
         saveas(gcf,figname);
         close all
         
@@ -115,14 +119,16 @@ for mouse = 1:1 %comment when you want to run whole batch of mice
                 vocalStr = experiment_data.test(1,testNum).trace(1,1).stimulus.vocal_call_file;
                 vocalNum=0;
                 
+                %%Uncomment 
                 %Assign a number to each of the stimuli used
-                for i = 1:length(stimdata)
-                    stim = stimdata{i,1};
-                    if strcmp(vocalStr, stim) vocalNum=i; end
-                end
+%                 for i = 1:length(stimdata)
+%                     stim = stimdata{1}(i);
+%                     if strcmp(vocalStr, stim{1}) vocalNum=i; end
+%                 end
+
                 %%%Example of what Pat had in his original script:
-                %                 if strcmp(vocalStr, 'A4-11-sylb10.call1') vocalNum=1; end
-                
+                if strcmp(vocalStr, '23A_15kHz_OLap2ms.call1') vocalNum=1; end
+                if strcmp(vocalStr, '23B_21kHz_OLap1ms.call1') vocalNum=2; end
                 if vocalNum~=0
                     test_to_view = testNum;
                     trace_num = size(experiment_data.test(1,test_to_view).trace, 2);
@@ -134,19 +140,19 @@ for mouse = 1:1 %comment when you want to run whole batch of mice
                     %                 vocalization = filter(Hd,vocalization);
                     %% ------------------------
                     
-                    [model_errorsL model_output] = VisualizeTracePredictions(experiment_data, ...
+                    [model_errorsL, model_output] = VisualizeTracePredictions(experiment_data, ...
                         prefs, ...
                         model, ...
                         test_to_view, ...
                         trace_to_view,[]);
                     numStr = num2str(test_to_view);
                     %                     figname = ['/Users/robertpa/Desktop/mouseDataFigs/' prefs.cell_id '_vocalL_' numStr '.pdf'];
-                    figname = ['C:\Users\emahrt\Documents\ElectrophysiologyProjects\TestData' prefs.cell_id '_vocalL_' numStr '.pdf'];
+                    figname = [savepath prefs.cell_id '_vocalL_' numStr '.pdf'];
                     saveas(gcf,figname);
                     %             close all
                     close force all
-                    micePrediction( mouse, vocalNum+2 ) = sum( max(model_output,0));
-                    miceError( mouse, vocalNum+2 ) = model_errorsL;
+                    micePrediction(mouse, vocalNum+2) = sum(max(model_output,0));
+                    miceError(mouse, vocalNum+2) = model_errorsL;
                     lmo = length(model_output);
                     if lmo<100 model_output = [model_output model_output(lmo)*ones(1,100-lmo)]; end
                     if lmo>100 model_output = model_output(1:100); end
@@ -161,13 +167,13 @@ for mouse = 1:1 %comment when you want to run whole batch of mice
                     % %             figname = ['/Users/robertpa/Desktop/mouseDataFigs/' prefs.cell_id '_vocalLC_' numStr '.pdf'];
                     % %             saveas(gcf,figname);
                     close all
-                    display(['prediction = ' num2str(micePrediction( mouse, vocalNum+2 )) ', model_errorsL = ' num2str(model_errorsL)]);
+                    display(['prediction = ' num2str(micePrediction(mouse, vocalNum+2 )) ', model_errorsL = ' num2str(model_errorsL)]);
                     %             display(['model_errorsL = ' num2str(model_errorsL) ', model_errorsLC = ' num2str(model_errorsLC)]);
                 end
             end
         end
     end
-    dlmwrite('responsePrediction.txt',responsePrediction, 'delimiter', '\t', 'precision', '%.4f', '-append')
-    dlmwrite('micePrediction.txt', micePrediction, 'delimiter', '\t', 'precision', '%.4f')
-    dlmwrite('micePredictError.txt', miceError, 'delimiter', '\t', 'precision', '%.4f')
+    dlmwrite((strcat(savepath,'\responsePrediction.txt')),responsePrediction, 'delimiter', '\t', 'precision', '%.4f', '-append')
+    dlmwrite('C:\Users\emahrt\Documents\ElectrophysiologyProjects\TestData\micePrediction.txt', micePrediction, 'delimiter', '\t', 'precision', '%.4f')
+    dlmwrite('C:\Users\emahrt\Documents\ElectrophysiologyProjects\TestData\micePredictError.txt', miceError, 'delimiter', '\t', 'precision', '%.4f')
 end
