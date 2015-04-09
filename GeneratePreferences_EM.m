@@ -40,7 +40,7 @@ if exist('animal_type','var')
 % Swap out the following path definitions for the inline paths in code
 % below this section
       basePath = 'C:\Users\emahrt\Documents\ElectrophysiologyProjects'
-      stimPath = '\FreqJumpProject_Electrophysiology_Stimuli\AllStim_EverPresented'
+      stimPath = '\FreqJumpProject_Electrophysiology_Stimuli\AllStim_EverPresented\'
       dataPath = '\FreqJumpProject_ElectrophysiologyData\'
       extractDataPath = '\FreqJumpProject_ElectrophysiologyData\Data\ExtractedData\'
 

@@ -3,19 +3,18 @@ close all
 clear variables
 clear all
 
-savepath = 'C:\Users\emahrt\Documents\mice_predictions\'
+savepath = 'C:\Users\emahrt\Documents\mice_predictions\results\'
 
 fid=fopen('mice.txt'); %where test nums are stored
 mousedata = textscan(fid, '%s %s %s %s %s %s %s %s %s %s %s', 1); %change last number to total number of cells in mice.txt to analyze ALL cells/rows
 fclose(fid);
 
-%%%Uncomment below when you want to add in the txt file of stimuli rather than having them inline below
-% fileID=fopen('stimuli.txt'); 
-% stimdata = textscan(fileID, '%s', 82); %Change the last number to reflect the total number of stimuli
-% fclose(fileID);
+fileID=fopen('stimuli.txt');
+stimdata = textscan(fileID, '%s', 82); %Change the last number to reflect the total number of stimuli
+fclose(fileID);
 
 numMice = length(mousedata{1,1});
-micePrediction = zeros(numMice, 1); %This makes an array the same size as the number of files to be analyzed and fills it with zeros  
+micePrediction = zeros(numMice, 1); %This makes an array the same size as the number of files to be analyzed and fills it with zeros
 %change last number to analyze ALL cells/rows
 miceError = zeros(numMice, 1);  %change last number to analyze ALL cells/rows
 sndType = '.call1'; %assuming is stimulus file type?
@@ -31,29 +30,29 @@ for mouse = 1:1 %comment when you want to run whole batch of mice
     %                                          char(mousedata{1,11}(mouse)),...
     %                                          char(mousedata{1,2}(mouse))); %uncomment this when you are ready to analyze whole batch
     prefs = GeneratePreferences_EM('Mouse', '1327', 'b', '187');
-%     prefs = GeneratePreferences_EM(mousepath, 1);
+    %     prefs = GeneratePreferences_EM(mousepath, 1);
     %function prefs = GeneratePreferences_EM(animal_number, experiment_letter, cell_depth)
     %Use this as test file; comment out when you are ready to analyze batch
     %of mice
     
     %Set the threshold used for spike detection. 0.11 is the default.
     prefs.spike_time_peak_threshold = str2num(char(mousedata{1,10}(mouse))); %assuming spike thresholds should be saved in 10th column
-%     prefs.spike_time_filter_cutoff = 1; %%%WHAT IS THIS AND WHAT ARE THE RIGHT VALUES FOR THIS?
+    %     prefs.spike_time_filter_cutoff = 1; %%%WHAT IS THIS AND WHAT ARE THE RIGHT VALUES FOR THIS?
     %Extract XML metadata and convert to to Matlab structure
     experiment_data = LoadExperimentData(prefs); %Is this where it actually loads the .raw file? Check what 'LoadExperimentData' does
     experiment_data.pst_filename
     
     %-------------------
-    % Test Visualization 
+    % Test Visualization
     %-------------------
     %Specify the test number to visualize, this is a one tone test
     freqtest_num = str2num(char(mousedata{1,8}(mouse)));    %Generate contour plot of single frequency tuning curve
-        %Tuning curves are in column 8
-        
+    %Tuning curves are in column 8
+    
     if freqtest_num ~= 0
         %         figname = ['/Users/robertpa/Desktop/mouseDataFigs/' prefs.cell_id '_freq.pdf'];
         figname = [savepath prefs.cell_id '_freq.pdf'];
-%         figname = [mousepath  prefs.cell_id '_freq.pdf'];
+        %         figname = [mousepath  prefs.cell_id '_freq.pdf'];
         
         [unique_frequencies, ...
             unique_attenuations, ...
@@ -68,8 +67,8 @@ for mouse = 1:1 %comment when you want to run whole batch of mice
     % VisualizeTestData(experiment_data,prefs,test_num,[0 1 0 0 1])
     %--------------------------------------
     %Specify the test number to visualize, this is a two-tone test
-    firstVocal = str2num(char(mousedata{1,6}(mouse)))
-    lastVocal = str2num(char(mousedata{1,7}(mouse)))
+    firstVocal = str2num(char(mousedata{1,6}(mouse)));
+    lastVocal = str2num(char(mousedata{1,7}(mouse)));
     
     % %--------------------
     % % Trace Visualization %WHAT DOES THIS DO??
@@ -119,16 +118,15 @@ for mouse = 1:1 %comment when you want to run whole batch of mice
                 vocalStr = experiment_data.test(1,testNum).trace(1,1).stimulus.vocal_call_file;
                 vocalNum=0;
                 
-                %%Uncomment 
                 %Assign a number to each of the stimuli used
-%                 for i = 1:length(stimdata)
-%                     stim = stimdata{1}(i);
-%                     if strcmp(vocalStr, stim{1}) vocalNum=i; end
-%                 end
+              stim = stimdata{1,1};
+%                vocalNum = find(~cellfun(@isempty, strcmp(stim,vocalStr))); %find the index of the location where the matching vocalfile name is in stimdata
+                              vocalNum = find(strcmp(stim,vocalStr)); %find the index of the location where the matching vocalfile name is in stimdata
 
-                %%%Example of what Pat had in his original script:
-                if strcmp(vocalStr, '23A_15kHz_OLap2ms.call1') vocalNum=1; end
-                if strcmp(vocalStr, '23B_21kHz_OLap1ms.call1') vocalNum=2; end
+                %%%Hard coded way to refer to stimuli names:
+%                                 if strcmp(vocalStr, '23A_15kHz_OLap2ms.call1') vocalNum=1; end
+%                                 if strcmp(vocalStr, '23B_21kHz_OLap1ms.call1') vocalNum=2; end
+                
                 if vocalNum~=0
                     test_to_view = testNum;
                     trace_num = size(experiment_data.test(1,test_to_view).trace, 2);
