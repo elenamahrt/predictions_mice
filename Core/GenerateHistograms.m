@@ -34,6 +34,7 @@ function [out_histograms ...
 %   experiment_data     bat2matlab structure with requested histograms
 %                       included
 
+% disp('bin width 1')
 bin_width = prefs.histogram_bin_width;
 
 if ~exist('trace_nums','var')
@@ -63,9 +64,11 @@ for test_num = test_nums
     end
     for trace_num = traces_2_process
         trace = traces(trace_num);
+%         disp('bin width 2')
+%         bin_width
         num_bins = ceil(trace.record_duration/bin_width); %Bin size given in milliseconds
         num_sweeps = size(spike_times{test_num,trace_num},1);
-        bin_centers = linspace(bin_width/2,trace.record_duration-bin_width/2,num_bins);
+                bin_centers = linspace(bin_width/2,trace.record_duration-bin_width/2,num_bins);
         collated_spike_times = [];
         sweep_histograms = zeros(num_sweeps,num_bins);
         trace_spike_times = spike_times{test_num,trace_num};

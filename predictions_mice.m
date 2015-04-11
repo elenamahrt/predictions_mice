@@ -3,35 +3,71 @@ close all
 clear variables
 clear all
 
-savepath = 'C:\Users\emahrt\Documents\mice_predictions\results\'
+%%%%%%  SET YOUR VARIABLES AND PATHS   %%%%%%
+%uncomment/comment these lines when you want to run model on distorted stimuli
+% savepath = 'C:\Users\emahrt\Documents\mice_predictions\linearResults\'
+savepath = 'C:\Users\emahrt\Documents\mice_predictions\distortedResults\'
 
-fid=fopen('mice.txt'); %where test nums are stored
-mousedata = textscan(fid, '%s %s %s %s %s %s %s %s %s %s %s', 1); %change last number to total number of cells in mice.txt to analyze ALL cells/rows
+yourMice = 51; %change this to reflect how many cells are in your data set ('mice.txt') that you want to analyze
+yourStim = 132; %change this to reflect how many stimuli are in your stimulus set ('stimuli.txt') %%%Linear have 82; Distorted have 132%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% TO DO = write shell commands to delete txt files AND cache files
+
+%  Read txt files that have stimulus and cell information in them
+fid=fopen('mice.txt'); %where test information is stored
+mousedata = textscan(fid, '%s %s %s %s %s %s %s %s %s %s %s', yourMice);
 fclose(fid);
 
-fileID=fopen('stimuli.txt');
-stimdata = textscan(fileID, '%s', 82); %Change the last number to reflect the total number of stimuli
+fileID=fopen('stimuliDist.txt'); %where stimulus file names are stored Distorted stimuli are saved in 'stimuliDist.txt' and non distorted are saved in 'stimuli.txt'
+stimdata = textscan(fileID, '%s', yourStim); %Change the last number to reflect the total number of stimuli
 fclose(fileID);
-
 numMice = length(mousedata{1,1});
-micePrediction = zeros(numMice, 1); %This makes an array the same size as the number of files to be analyzed and fills it with zeros
-%change last number to analyze ALL cells/rows
-miceError = zeros(numMice, 1);  %change last number to analyze ALL cells/rows
-sndType = '.call1'; %assuming is stimulus file type?
+
+% Create empty arrays to put model information into
+micePrediction = zeros(numMice, yourMice); %This makes an array the same size as the number of files to be analyzed and fills it with zeros
+miceError = zeros(numMice, yourMice);  %This makes an array the same size as the number of files to be analyzed and fills it with zeros
+sndType = '.call1'; %what is your stimulus file type?
 % sndType = '.wav';
 
-% for mouse = 1:numMice
-%uncomment above when you want to run whole batch of mice
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% To Do between running model with distorted and non distorted stimuli:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Change the stimulus .txt file name (above) and the
+% path to your stimulus files
 
-for mouse = 1:1 %comment when you want to run whole batch of mice
-    responsePrediction = zeros(49,100); %assuming this creates an array filled with zeros that is same size as the number of files to be analyzed
+%Delete the cache of stored vocalizations; turn into an 'if/then' statement
+
+rmdir('C:\Users\emahrt\Documents\mice_predictions\Output\Mouse', 's');
+
+%===== Insert into GenerateStimulus.m ===
+%                     When you want to run model on distorted stimuli, Low
+%                     Pass filter them; uncomment the stuff below in
+%                     'GenerateStimulus.m' file
+%% --- Low-pass filter ---
+%                                     Hd = lowpass40khz;
+%                 vocalization = filter(Hd,vocalization);
+%% ------------------------
+
+%Delete cached files and variables below: (comment/uncomment the right one)
+responsePrediction = [ ];
+dlmwrite('C:\Users\emahrt\Documents\mice_predictions\distortedResults\responsePrediction.txt', responsePrediction, 'delimiter', '\t', 'precision', '%.4f', '-append');
+%     dlmwrite('C:\Users\emahrt\Documents\mice_predictions\linearResults\responsePrediction.txt', responsePrediction, 'delimiter', '\t', 'precision', '%.4f', '-append')
+
+for mouse = 50:numMice
+    %uncomment above when you want to run whole batch of mice
+    
+    % for mouse = 1:1 %comment when you want to run whole batch of mice
+    
+    responsePrediction = zeros(yourStim,100);  %100 has to do with Lars' code. Don't change it!
     %Create a preferences structure for the desired experimental data
-    %     prefs = GeneratePreferences_EM('Mouse', char(mousedata{1,1}(mouse)),...
-    %                                          char(mousedata{1,11}(mouse)),...
-    %                                          char(mousedata{1,2}(mouse))); %uncomment this when you are ready to analyze whole batch
-    prefs = GeneratePreferences_EM('Mouse', '1327', 'b', '187');
+    prefs = GeneratePreferences_EM('Mouse', char(mousedata{1,1}(mouse)),...
+        char(mousedata{1,11}(mouse)),...
+        char(mousedata{1,2}(mouse))); %uncomment this when you are ready to analyze whole batch
+    %     prefs = GeneratePreferences_EM('Mouse', '1327', 'b', '187');
     %     prefs = GeneratePreferences_EM(mousepath, 1);
     %function prefs = GeneratePreferences_EM(animal_number, experiment_letter, cell_depth)
+    
     %Use this as test file; comment out when you are ready to analyze batch
     %of mice
     
@@ -39,7 +75,7 @@ for mouse = 1:1 %comment when you want to run whole batch of mice
     prefs.spike_time_peak_threshold = str2num(char(mousedata{1,10}(mouse))); %assuming spike thresholds should be saved in 10th column
     %     prefs.spike_time_filter_cutoff = 1; %%%WHAT IS THIS AND WHAT ARE THE RIGHT VALUES FOR THIS?
     %Extract XML metadata and convert to to Matlab structure
-    experiment_data = LoadExperimentData(prefs); %Is this where it actually loads the .raw file? Check what 'LoadExperimentData' does
+    experiment_data = LoadExperimentData(prefs); %Load data file. Did you put it in the right place?
     experiment_data.pst_filename
     
     %-------------------
@@ -119,24 +155,18 @@ for mouse = 1:1 %comment when you want to run whole batch of mice
                 vocalNum=0;
                 
                 %Assign a number to each of the stimuli used
-              stim = stimdata{1,1};
-%                vocalNum = find(~cellfun(@isempty, strcmp(stim,vocalStr))); %find the index of the location where the matching vocalfile name is in stimdata
-                              vocalNum = find(strcmp(stim,vocalStr)); %find the index of the location where the matching vocalfile name is in stimdata
-
+                stim = stimdata{1,1};
+                %                vocalNum = find(~cellfun(@isempty, strcmp(stim,vocalStr))); %find the index of the location where the matching vocalfile name is in stimdata
+                vocalNum = find(strcmp(stim,vocalStr)); %find the index of the location where the matching vocalfile name is in stimdata
+                
                 %%%Hard coded way to refer to stimuli names:
-%                                 if strcmp(vocalStr, '23A_15kHz_OLap2ms.call1') vocalNum=1; end
-%                                 if strcmp(vocalStr, '23B_21kHz_OLap1ms.call1') vocalNum=2; end
+                %                                 if strcmp(vocalStr, '23A_15kHz_OLap2ms.call1') vocalNum=1; end
+                %                                 if strcmp(vocalStr, '23B_21kHz_OLap1ms.call1') vocalNum=2; end
                 
                 if vocalNum~=0
                     test_to_view = testNum;
                     trace_num = size(experiment_data.test(1,test_to_view).trace, 2);
                     trace_to_view = trace_num; % trace=1, arrn=40; trace=2, arrn=30; trace=3, arrn=20;
-                    
-                    %===== Inserted in GenerateStimulus.m ===
-                    %% --- High-pass filter ---
-                    %                 Hd = highpass40khz;
-                    %                 vocalization = filter(Hd,vocalization);
-                    %% ------------------------
                     
                     [model_errorsL, model_output] = VisualizeTracePredictions(experiment_data, ...
                         prefs, ...
@@ -144,7 +174,6 @@ for mouse = 1:1 %comment when you want to run whole batch of mice
                         test_to_view, ...
                         trace_to_view,[]);
                     numStr = num2str(test_to_view);
-                    %                     figname = ['/Users/robertpa/Desktop/mouseDataFigs/' prefs.cell_id '_vocalL_' numStr '.pdf'];
                     figname = [savepath prefs.cell_id '_vocalL_' numStr '.pdf'];
                     saveas(gcf,figname);
                     %             close all
@@ -152,7 +181,7 @@ for mouse = 1:1 %comment when you want to run whole batch of mice
                     micePrediction(mouse, vocalNum+2) = sum(max(model_output,0));
                     miceError(mouse, vocalNum+2) = model_errorsL;
                     lmo = length(model_output);
-                    if lmo<100 model_output = [model_output model_output(lmo)*ones(1,100-lmo)]; end
+                    if lmo<100 model_output = [model_output model_output(lmo)*ones(1,100-lmo)]; end %100 has to do with the length of the model; because the model only predicts for the length of the stimulus, not after.
                     if lmo>100 model_output = model_output(1:100); end
                     responsePrediction(vocalNum, :) = model_output;
                     %             prediction( mouse, testNum ) = sum( max(model_output,0))/(size(model_output, 2));
@@ -171,7 +200,14 @@ for mouse = 1:1 %comment when you want to run whole batch of mice
             end
         end
     end
-    dlmwrite('C:\Users\emahrt\Documents\mice_predictions\responsePrediction.txt', responsePrediction, 'delimiter', '\t', 'precision', '%.4f', '-append')
-    dlmwrite('C:\Users\emahrt\Documents\mice_predictions\micePrediction.txt', micePrediction, 'delimiter', '\t', 'precision', '%.4f')
-    dlmwrite('C:\Users\emahrt\Documents\mice_predictions\micePredictError.txt', miceError, 'delimiter', '\t', 'precision', '%.4f')
+    %     dlmwrite('C:\Users\emahrt\Documents\mice_predictions\linearResults\responsePrediction.txt', responsePrediction, 'delimiter', '\t', 'precision', '%.4f', '-append')
+    %     dlmwrite('C:\Users\emahrt\Documents\mice_predictions\linearResults\micePrediction.txt', micePrediction, 'delimiter', '\t', 'precision', '%.4f')
+    %     dlmwrite('C:\Users\emahrt\Documents\mice_predictions\linearResults\micePredictError.txt', miceError, 'delimiter', '\t', 'precision', '%.4f')
+    %
+    dlmwrite('C:\Users\emahrt\Documents\mice_predictions\distortedResults\responsePrediction.txt', responsePrediction, 'delimiter', '\t', 'precision', '%.4f', '-append')
+    dlmwrite('C:\Users\emahrt\Documents\mice_predictions\distortedResults\micePrediction.txt', micePrediction, 'delimiter', '\t', 'precision', '%.4f')
+    dlmwrite('C:\Users\emahrt\Documents\mice_predictions\distortedResults\micePredictError.txt', miceError, 'delimiter', '\t', 'precision', '%.4f')
+    
 end
+
+disp 'All Done!'

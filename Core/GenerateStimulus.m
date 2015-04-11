@@ -102,6 +102,17 @@ for test_num = test_nums
                 stim_samples = length(vocalization);
                 %Attenuate the signal
                 vocalization = dbAttenuate(vocalization, stim.attenuation);
+              
+%                 %% --- High-pass filter ---
+%                 Hd = highpass40khz;
+%                 vocalization = filter(Hd,vocalization);
+%                 %% ------------------------
+                
+                  %% --- Low-pass filter ---
+                Hd = lowpass40khz;
+                vocalization = filter(Hd,vocalization);
+                %% ------------------------
+                
                 %Store the vocalization alone in the stimulus structure
                 individual_stimulus_signals{test_num,trace_num,1} = vocalization;
                 %Add this signal to the combined stimulus signal
@@ -144,6 +155,7 @@ for test_num = test_nums
                             stim_signal = stim_signal(1:end+room_at_end);
                         end
                         stim_samples = length(stim_signal);
+                       
                         %Add this signal to the combined stimulus signal
                         stimulus_signal(round(stim_offset):round(stim_offset+stim_samples-1)) = ...
                             stimulus_signal(round(stim_offset):round(stim_offset+stim_samples-1)) + stim_signal;
