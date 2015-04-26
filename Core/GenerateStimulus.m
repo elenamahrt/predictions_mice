@@ -108,10 +108,13 @@ for test_num = test_nums
 %                 vocalization = filter(Hd,vocalization);
 %                 %% ------------------------
                 
-                  %% --- Low-pass filter ---
+                  % --- Low-pass filter ---
                 Hd = lowpass40khz;
                 vocalization = filter(Hd,vocalization);
-                %% ------------------------
+                
+                Hd = lowpass40khz;
+                vocalization = filter(Hd,vocalization);
+                % ------------------------
                 
                 %Store the vocalization alone in the stimulus structure
                 individual_stimulus_signals{test_num,trace_num,1} = vocalization;

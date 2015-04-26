@@ -39,11 +39,15 @@ if exist('animal_type','var')
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
     basePath = 'C:\Users\emahrt\Documents\mice_predictions\';
+    
+%Uncomment/comment the stimPath to the folder of .call1 files that you want
+%to run the model on. Don't forget to check if the LowPass filter is on or
+%not! (In 'GenerateStimulus.m' script)
 %     stimPath = 'stimuli\linearStim\';
-        stimPath = 'stimuli\distortedStim\'; %Uncomment this and comment
-%         the one above when you are ready to run the model on distorted
-%         stimuli
-    dataPath = 'data\';
+%         stimPath = 'stimuli\distStim\'; %this folder includes all distorted stimuli, (4, 10, and 20). Stimuli that do not have a '4', '10', or ;20' anywhere in the file name are '4's' by default.
+%      stimPath = 'stimuli\dist10Stim\';
+         stimPath = 'stimuli\dist20Stim\';
+        dataPath = 'data\';
     extractDataPath = 'data\extractedData\';
 
 prefs.bat2matlab_directory = basePath; 
@@ -99,13 +103,13 @@ prefs.spectrogram_absolute_scaling = false;
 %Options for Spectrogram calculation
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %The number of times to evaluate the spectrogram in the frequency domain.
-prefs.spectrogram_freq_samples = 2^10;
+prefs.spectrogram_freq_samples = 2^10; %Low numbers result in very low frequency resolution on spectrogram (think of as FFT size). big numbers take TONS of memory
 %The density of sampling in the time domain
 % prefs.spectrogram_time_samples_per_millisecond = 1\2;
 % prefs.spectrogram_time_samples_per_millisecond = 2;
 prefs.spectrogram_time_samples_per_millisecond = 5;
 %Frequency range for spectrogram
-prefs.spectrogram_range = [0 100000];
+prefs.spectrogram_range = [0 120000];
 %Window length (in seconds)
 % prefs.spectrogram_window_length = 0.0001;
 % prefs.spectrogram_window_length = 0.0005;
@@ -142,7 +146,7 @@ prefs.frequency_cutoff_ratio = 175; %Higher values smooth more
 %Options for model data generation
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 prefs.model_num_data_rows_per_cell = 2^7;
-prefs.model_time_samples_per_millisecond = 1/4; %Default = no idea why, but for a 4 ms time bin, this need to be '1/4'. for 0.5 ms time bin this needs to be '1/2'
+prefs.model_time_samples_per_millisecond = 1/2; %Default = no idea why, but for a 4 ms time bin, this need to be '1/4'. for 0.5 ms time bin this needs to be '1/2'
 % prefs.model_time_samples_per_millisecond = 1; %Default
 prefs.model_spectral_integration = 0; %0:Rectangular 1:Gaussian
 
@@ -150,7 +154,7 @@ prefs.model_spectral_integration = 0; %0:Rectangular 1:Gaussian
 %Options for Histogram generation
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % prefs.histogram_bin_width = 1; 
-prefs.histogram_bin_width = 4; %Default
+prefs.histogram_bin_width = 2; %Default
 % prefs.histogram_bin_width = 10;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -196,6 +200,3 @@ prefs.colormap = jet;prefs.colormap_name = 'jet';
 if isempty(figure_exists)
     close;
 end
-
-% clear cache at end! find function that deletes files. Delete at this path % C:\Users\emahrt\Documents\ElectrophysiologyProjects\Output\Mouse\Mouse1327b_187    
-
