@@ -1,7 +1,7 @@
 function prefs = GeneratePreferences_EM(animal_type, ...
                                      animal_string, ...
                                      experiment_string, ...
-                                     cell_string)
+                                     cell_string,Model)
 %
 %function prefs = GeneratePreferences(animal_number,
 %                                     experiment_letter,
@@ -43,7 +43,7 @@ if exist('animal_type','var')
 %Uncomment/comment the stimPath to the folder of .call1 files that you want
 %to run the model on. Don't forget to check if the LowPass filter is on or
 %not! (In 'GenerateStimulus.m' script)
-stimPath = ['stimuli\' model '\'];
+stimPath = ['stimuli\' Model '\'];
 
 %     stimPath = 'stimuli\linear\';
 %         stimPath = 'stimuli\distorted4\'; %this folder includes all distorted stimuli, (4, 10, and 20). Stimuli that do not have a '4', '10', or ;20' anywhere in the file name are '4's' by default.
