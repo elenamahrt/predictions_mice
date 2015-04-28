@@ -43,10 +43,13 @@ if exist('animal_type','var')
 %Uncomment/comment the stimPath to the folder of .call1 files that you want
 %to run the model on. Don't forget to check if the LowPass filter is on or
 %not! (In 'GenerateStimulus.m' script)
-%     stimPath = 'stimuli\linearStim\';
-%         stimPath = 'stimuli\distStim\'; %this folder includes all distorted stimuli, (4, 10, and 20). Stimuli that do not have a '4', '10', or ;20' anywhere in the file name are '4's' by default.
-%      stimPath = 'stimuli\dist10Stim\';
-         stimPath = 'stimuli\dist20Stim\';
+stimPath = ['stimuli\' model '\'];
+
+%     stimPath = 'stimuli\linear\';
+%         stimPath = 'stimuli\distorted4\'; %this folder includes all distorted stimuli, (4, 10, and 20). Stimuli that do not have a '4', '10', or ;20' anywhere in the file name are '4's' by default.
+%      stimPath = 'stimuli\distorted10\';
+%          stimPath = 'stimuli\distorted20\';
+
         dataPath = 'data\';
     extractDataPath = 'data\extractedData\';
 

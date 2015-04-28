@@ -110,19 +110,19 @@ for model_num = 1:num_models
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %Generate the output for the constrained one tone model contribution
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%     output = ProcessPoleZeroModel(model, input_data);  
-    output = ProcessModel(model, input_data_4_prediction);  
+    %     output = ProcessPoleZeroModel(model, input_data);
+    output = ProcessModel(model, input_data_4_prediction);
     model_output(model_num,:) = output;
-
-    model_errors(model_num) = mean((output_data_4_plot - max(output,0)).^2)/mean(output_data_4_plot.^2); %Lars' = Normalized Squared Error.
-
-    %     model_errors(model_num) = mean((output_data_4_plot - max(output,0)).^2)/sqrt(mean(output_data_4_plot.^2)*mean(max(output,0).^2)); % 4/23/15 Get NMSE's around 3 for linear predictions. 
-%     model_errors(model_num) = mean((output_data_4_plot - max(output,0)).^2)/(mean(output_data_4_plot)*mean(max(output,0))); 
-
-%     model_errors(model_num) = mean(output_data_4_plot.*max(output,0))/sqrt(mean(output_data_4_plot.^2)*mean(max(output,0).^2));
-%     % Pat's = Is a measure of Normalized Distance. Reduces the amount of
-%     error associated with reporting values associated with large actual
-%     responses that are not predicted.
+    
+    %     model_errors(model_num) = mean((output_data_4_plot - max(output,0)).^2)/mean(output_data_4_plot.^2); %Lars' = Normalized Squared Error.
+    
+    %     model_errors(model_num) = mean((output_data_4_plot - max(output,0)).^2)/sqrt(mean(output_data_4_plot.^2)*mean(max(output,0).^2)); % 4/23/15 Get NMSE's around 3 for linear predictions.
+    %     model_errors(model_num) = mean((output_data_4_plot - max(output,0)).^2)/(mean(output_data_4_plot)*mean(max(output,0)));
+    
+    model_errors(model_num) = mean(output_data_4_plot.*max(output,0))/sqrt(mean(output_data_4_plot.^2)*mean(max(output,0).^2));
+    %     % Pat's = Is a measure of Normalized Distance. Reduces the amount of
+    %     error associated with reporting values associated with large actual
+    %     responses that are not predicted.
 end
 
 if visualize_data

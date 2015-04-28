@@ -1,9 +1,9 @@
 function [individual_stimulus_signals ...
-          summed_stimulus_signals ...
-          stimulus_sampling_frequencies] = GenerateStimulus(experiment_data, ...
-                                                            prefs, ...
-                                                            test_nums, ...
-                                                            trace_nums)
+    summed_stimulus_signals ...
+    stimulus_sampling_frequencies] = GenerateStimulus(experiment_data, ...
+    prefs, ...
+    test_nums, ...
+    trace_nums)
 %
 %function [individual_stimulus_signals
 %          summed_stimulus_signals
@@ -23,11 +23,11 @@ function [individual_stimulus_signals ...
 %
 %   OUTPUT ARGUMENTS
 %   individual_stimulus_signals     The generated individual stimulus
-%                                   signal components in a cell 
+%                                   signal components in a cell
 %                                   array indexed by {test_num,trace_num}
-%   summed_stimulus_signals         The summed stimulus signals in a cell 
+%   summed_stimulus_signals         The summed stimulus signals in a cell
 %                                   array indexed by {test_num,trace_num}
-%   stimulus_sampling_frequencies   The stimulus sampling frequencies in a 
+%   stimulus_sampling_frequencies   The stimulus sampling frequencies in a
 %                                   cell array indexed by {test_num,trace_num}
 warn = 'orange';
 
@@ -65,7 +65,7 @@ for test_num = test_nums
                     WriteStatus(['Stimulus file ' prefs.audio_directory stim.vocal_call_file ' not found'...
                         '  -Make sure your stimulus location folder is set correctly'], 'red');
                     return
-%                     error(['Stimulus file ' prefs.audio_directory stim.vocal_call_file ' not found']);
+                    %                     error(['Stimulus file ' prefs.audio_directory stim.vocal_call_file ' not found']);
                 end
                 [vocalization sampling_frequency] = ParseAudioData([prefs.audio_directory stim.vocal_call_file]);
                 if remove_vocalization_mean
@@ -77,7 +77,7 @@ for test_num = test_nums
                 if ~(sampling_frequency == trace.samplerate_da)
                     WriteStatus('Samplerate of vocalization does not match DA samplerate', warn);
                 end
-
+                
                 if add_rise_fall_to_vocalizations
                     %Get length of onset period in samples
                     stim.rise_fall = 5;
@@ -92,8 +92,8 @@ for test_num = test_nums
                 stimulus_signal = zeros(1,ceil(stimulus_length * sampling_frequency));
                 vocal_delay = stim.delay;
                 %Calculate length of the vocalization, in milliseconds
-%                 vocal_length = length(vocalization) / sampling_frequency * 1000;
-%                 experiment_data.test(test_num).trace(trace_num).stimulus(1).duration = vocal_length;
+                %                 vocal_length = length(vocalization) / sampling_frequency * 1000;
+                %                 experiment_data.test(test_num).trace(trace_num).stimulus(1).duration = vocal_length;
                 stim_offset = round(sampling_frequency * (vocal_delay /1000)) + 1;
                 room_at_end = length(stimulus_signal) - (length(vocalization) + stim_offset);
                 if room_at_end < 0
@@ -102,25 +102,32 @@ for test_num = test_nums
                 stim_samples = length(vocalization);
                 %Attenuate the signal
                 vocalization = dbAttenuate(vocalization, stim.attenuation);
-              
-%                 %% --- High-pass filter ---
-%                 Hd = highpass40khz;
-%                 vocalization = filter(Hd,vocalization);
-%                 %% ------------------------
                 
-                  % --- Low-pass filter ---
-                Hd = lowpass40khz;
-                vocalization = filter(Hd,vocalization);
+                %                 %% --- High-pass filter ---
+                %                 Hd = highpass40khz;
+                %                 vocalization = filter(Hd,vocalization);
+                %                 %% ------------------------
                 
-                Hd = lowpass40khz;
-                vocalization = filter(Hd,vocalization);
-                % ------------------------
+                % for function 'run_predictions_mice.m', change this to an if/then
+                % statement that looks for = if model = linear then SKIP filtering
+                
+%                 if ~(model == 'linear')
+%                     %                   --- Low-pass filter ---
+                    Hd = lowpass40khz;
+                    vocalization = filter(Hd,vocalization);
+                    
+                    Hd = lowpass40khz;
+                    vocalization = filter(Hd,vocalization);
+%                     %                 % ------------------------
+%                 else
+%                 end
+                
                 
                 %Store the vocalization alone in the stimulus structure
                 individual_stimulus_signals{test_num,trace_num,1} = vocalization;
                 %Add this signal to the combined stimulus signal
                 stimulus_signal(stim_offset:(stim_offset+stim_samples-1)) = ...
-                                stimulus_signal(stim_offset:(stim_offset+stim_samples-1)) + vocalization;
+                    stimulus_signal(stim_offset:(stim_offset+stim_samples-1)) + vocalization;
             else
                 sampling_frequency = trace.samplerate_da;
                 stimulus_length = trace.record_duration / 1000; %Convert to seconds
@@ -134,11 +141,11 @@ for test_num = test_nums
             %Make a base signal the length of the recording duration that
             %the tones will be added to.
             stimulus_signal = zeros(1,round(stimulus_length * sampling_frequency));
-            stimulus = trace.stimulus;  
+            stimulus = trace.stimulus;
             if ~isempty(stimulus)
                 for stim_num = 1:size(stimulus,2)
                     if strcmp(stimulus(stim_num).soundtype_name,'tone') ||...
-                       strcmp(stimulus(stim_num).soundtype_name,'twotone')
+                            strcmp(stimulus(stim_num).soundtype_name,'twotone')
                         stim = stimulus(stim_num);
                         stim_time = 0:(1/sampling_frequency):(stim.duration / 1000);
                         stim_signal = sin(2 * pi * stim.frequency * stim_time);
@@ -158,7 +165,7 @@ for test_num = test_nums
                             stim_signal = stim_signal(1:end+room_at_end);
                         end
                         stim_samples = length(stim_signal);
-                       
+                        
                         %Add this signal to the combined stimulus signal
                         stimulus_signal(round(stim_offset):round(stim_offset+stim_samples-1)) = ...
                             stimulus_signal(round(stim_offset):round(stim_offset+stim_samples-1)) + stim_signal;
