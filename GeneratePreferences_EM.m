@@ -40,15 +40,10 @@ if exist('animal_type','var')
 
     basePath = 'C:\Users\emahrt\Documents\mice_predictions\';
     
-%Uncomment/comment the stimPath to the folder of .call1 files that you want
-%to run the model on. Don't forget to check if the LowPass filter is on or
+% Don't forget to check if the LowPass filter is on or
 %not! (In 'GenerateStimulus.m' script)
-stimPath = ['stimuli\' Model '\'];
 
-%     stimPath = 'stimuli\linear\';
-%         stimPath = 'stimuli\distorted4\'; %this folder includes all distorted stimuli, (4, 10, and 20). Stimuli that do not have a '4', '10', or ;20' anywhere in the file name are '4's' by default.
-%      stimPath = 'stimuli\distorted10\';
-%          stimPath = 'stimuli\distorted20\';
+stimPath = ['stimuli\' Model '\'];
 
         dataPath = 'data\';
     extractDataPath = 'data\extractedData\';
