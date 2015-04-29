@@ -1,7 +1,7 @@
 function prefs = GeneratePreferences_EM(animal_type, ...
-                                     animal_string, ...
-                                     experiment_string, ...
-                                     cell_string,Model)
+    animal_string, ...
+    experiment_string, ...
+    cell_string,Model)
 %
 %function prefs = GeneratePreferences(animal_number,
 %                                     experiment_letter,
@@ -16,7 +16,7 @@ function prefs = GeneratePreferences_EM(animal_type, ...
 %   experiment_string   The descriptor of the specific experiment used for the
 %                       experimental data, in string format.
 %                       Example: 'c'
-%   cell_string         The desciptor of the cell used for the experimental data. 
+%   cell_string         The desciptor of the cell used for the experimental data.
 %                       The electrode depth is a good choice.
 %                       Example: '1440'
 %
@@ -31,42 +31,45 @@ if exist('animal_type','var')
     %Test description
     prefs.animal_type = animal_type;
     prefs.animal_string = animal_string;
+    if experiment_string == '0'
+        experiment_string = '';
+    end
     prefs.experiment_string = experiment_string;
     prefs.cell_string = cell_string;
     prefs.invert_color = 0;
-
+    
     %Path definitions
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+    
     basePath = 'C:\Users\emahrt\Documents\mice_predictions\';
     
-% Don't forget to check if the LowPass filter is on or
-%not! (In 'GenerateStimulus.m' script)
-
-stimPath = ['stimuli\' Model '\'];
-
-        dataPath = 'data\';
+    % Don't forget to check if the LowPass filter is on or
+    %not! (In 'GenerateStimulus.m' script)
+    
+    stimPath = ['stimuli\' Model '\'];
+    
+    dataPath = 'data\';
     extractDataPath = 'data\extractedData\';
-
-prefs.bat2matlab_directory = basePath; 
+    
+    prefs.bat2matlab_directory = basePath;
     if strmatch('Bat',animal_type)
-        prefs.audio_directory = [prefs.bat2matlab_directory stimPath]; 
+        prefs.audio_directory = [prefs.bat2matlab_directory stimPath];
         base_batlab_data_path = [prefs.bat2matlab_directory dataPath];
     elseif strmatch('Mouse',animal_type)
-        prefs.audio_directory = [prefs.bat2matlab_directory stimPath]; 
+        prefs.audio_directory = [prefs.bat2matlab_directory stimPath];
         base_batlab_data_path = [prefs.bat2matlab_directory dataPath];
     else
         error('Incorrect animal type specified in GeneratePreferences()');
     end
     prefs.Bat2Matlab_data_filepath = [prefs.bat2matlab_directory extractDataPath animal_type animal_string experiment_string '.mat'];
     prefs.raw_data_filepath = [base_batlab_data_path '' animal_type '' animal_string '\' animal_type animal_string experiment_string '.raw'];
-%    prefs.xml_data_filepath = [base_batlab_data_path '' animal_type '' animal_string '\' animal_type animal_string experiment_string '-alltests.xml'];
+    %    prefs.xml_data_filepath = [base_batlab_data_path '' animal_type '' animal_string '\' animal_type animal_string experiment_string '-alltests.xml'];
     prefs.output_data_filepath = [prefs.bat2matlab_directory '\Output\' animal_type '\' animal_type animal_string experiment_string '_' cell_string];
     prefs.cache_dir = [prefs.output_data_filepath '\cache'];
     prefs.cell_id = [animal_type animal_string experiment_string '_' cell_string];
     prefs.cell_id4_plot = prefs.cell_id; prefs.cell_id4_plot(strfind(prefs.cell_id4_plot,'_')) = '.';
     prefs.pst_data_filepath = [base_batlab_data_path '\' animal_type '' animal_string '\' animal_type animal_string experiment_string '.pst'];;
-
+    
     %Generate the required directories for processing
     warning off
     mkdir(prefs.output_data_filepath);
@@ -74,7 +77,7 @@ prefs.bat2matlab_directory = basePath;
     warning on
 end
 
-prefs.speaker_calibration_file = 'speaker_calibration_8_27_06'; %This is a Matlab file 
+prefs.speaker_calibration_file = 'speaker_calibration_8_27_06'; %This is a Matlab file
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %Options used for speaker callibration and dB SPL normalization
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -151,7 +154,7 @@ prefs.model_spectral_integration = 0; %0:Rectangular 1:Gaussian
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %Options for Histogram generation
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% prefs.histogram_bin_width = 1; 
+% prefs.histogram_bin_width = 1;
 prefs.histogram_bin_width = 2; %Default
 % prefs.histogram_bin_width = 10;
 

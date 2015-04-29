@@ -111,16 +111,15 @@ for test_num = test_nums
                 % for function 'run_predictions_mice.m', change this to an if/then
                 % statement that looks for = if model = linear then SKIP filtering
                 
-%                 if ~(model == 'linear')
-%                     %                   --- Low-pass filter ---
+
+%              %------------ Low-pass filter ---
                     Hd = lowpass40khz;
                     vocalization = filter(Hd,vocalization);
                     
                     Hd = lowpass40khz;
                     vocalization = filter(Hd,vocalization);
-%                     %                 % ------------------------
-%                 else
-%                 end
+%             % ------------------------
+
                 
                 
                 %Store the vocalization alone in the stimulus structure
