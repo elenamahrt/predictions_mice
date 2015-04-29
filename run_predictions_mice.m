@@ -91,7 +91,7 @@ for mouse = 1:numMice
     %Create a preferences structure for the desired experimental data
     prefs = GeneratePreferences_EM('Mouse', char(mousedata{1,1}(mouse)),...
         char(mousedata{1,11}(mouse)),...
-        char(mousedata{1,2}(mouse)), Model); %uncomment this when you are ready to analyze whole batch
+        char(mousedata{1,2}(mouse)),Model); %uncomment this when you are ready to analyze whole batch
     %     prefs = GeneratePreferences_EM('Mouse', '1327', 'b', '187');
     %     prefs = GeneratePreferences_EM(mousepath, 1);
     %function prefs = GeneratePreferences_EM(animal_number, experiment_letter, cell_depth)
@@ -158,7 +158,7 @@ for mouse = 1:numMice
     if freqtest_num ~= 0
         train_data = freqtest_num;
         %Create the model
-        [constrModel, model] = CreateModel(experiment_data,prefs,train_data); %was a 'model' at end. Did I put it there?
+        [constrModel, model] = CreateModel(experiment_data,prefs,train_data,Model); 
         %     model = CreateModel(experiment_data,prefs,train_data);
         %     spontRate = model.spontaneous_rate;
         numStr = num2str(train_data);
@@ -192,7 +192,7 @@ for mouse = 1:numMice
                         prefs, ...
                         model, ...
                         test_to_view, ...
-                        trace_to_view,[]);
+                        trace_to_view,[],Model);
                     numStr = num2str(test_to_view);
                     figname = [savepath prefs.cell_id '_vocalL_' numStr '.pdf'];
                     saveas(gcf,figname); 
@@ -209,7 +209,7 @@ for mouse = 1:numMice
                     %                                       prefs, ...
                     %                                       constrModel, ...
                     %                                       test_to_view, ...
-                    %                                       trace_to_view);
+                    %                                       trace_to_view,Model);
                     %             numStr = num2str(test_to_view);
                     % %             figname = ['/Users/robertpa/Desktop/mouseDataFigs/' prefs.cell_id '_vocalLC_' numStr '.pdf'];
                     % %             saveas(gcf,figname);

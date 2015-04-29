@@ -3,7 +3,7 @@ function [individual_stimulus_signals ...
     stimulus_sampling_frequencies] = GenerateStimulus(experiment_data, ...
     prefs, ...
     test_nums, ...
-    trace_nums)
+    trace_nums,Model)
 %
 %function [individual_stimulus_signals
 %          summed_stimulus_signals
@@ -111,7 +111,7 @@ for test_num = test_nums
                 % for function 'run_predictions_mice.m', change this to an if/then
                 % statement that looks for = if model = linear then SKIP filtering
                 
-%                 if ~(model == 'linear')
+                                if ~(Model == 'linear')
 %                     %                   --- Low-pass filter ---
                     Hd = lowpass40khz;
                     vocalization = filter(Hd,vocalization);
@@ -119,8 +119,8 @@ for test_num = test_nums
                     Hd = lowpass40khz;
                     vocalization = filter(Hd,vocalization);
 %                     %                 % ------------------------
-%                 else
-%                 end
+                 else
+                 end
                 
                 
                 %Store the vocalization alone in the stimulus structure

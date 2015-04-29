@@ -8,7 +8,7 @@ function [input_data ...
                                            model_mode, ...
                                            spectrogram_intervals, ...
                                            spike_times, ...
-                                           spike_idxs)
+                                           spike_idxs,Model)
 %
 %function [input_data
 %          target_data] = GenerateModelData(experiment_data,
@@ -112,7 +112,7 @@ for test_num = test_nums
             load(cache_filepath);
         else
             display(['Calculating spectrogram for test ' int2str(test_num) ', trace ' int2str(trace_num)]);
-            spectrograms = GenerateSpectrograms(experiment_data,prefs,test_num,trace_num);
+            spectrograms = GenerateSpectrograms(experiment_data,prefs,test_num,trace_num,Model);
             spectrogram = spectrograms{test_num,trace_num};
             save(cache_filepath,'spectrogram');
         end
