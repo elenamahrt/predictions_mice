@@ -19,9 +19,7 @@ close all
 startpath = 'C:\Users\emahrt\Documents\mice_predictions\results\';
 savepath = [startpath, Model, '\']
 
-Model
-
-yourMice = 17; %change this to reflect how many cells are in your data set ('mice.txt') that you want to analyze
+yourMice = 1; %change this to reflect how many cells are in your data set ('mice.txt') that you want to analyze
 %%%%%%%% 4/21/2015 = All cells with strictly inhibitory responses were removed. %%%%%%%
 %%%%%%%% Vocalizations were presented at only 15dB attenuation. %%%%%%%
 yourStim = 33; %change this to reflect how many stimuli are in your stimulus set ('stimuli.txt' or 'stimuliDist.txt')
@@ -69,14 +67,13 @@ end
 responsePrediction = [ ];
 dlmwrite(strcat(savepath, '\responsePrediction.txt'), responsePrediction, 'delimiter', '\t', 'precision', '%.4f', '-append')
 
-for mouse = 16:numMice
+for mouse = 1:numMice
     %uncomment above when you want to run whole batch of mice
     
     % for mouse = 1:1 %comment when you want to run whole batch of mice
     
     responsePrediction = zeros(yourStim,100);  %100 has to do with Lars' code. Don't change it!
     %Create a preferences structure for the desired experimental data
-    mousedata
     prefs = GeneratePreferences_EM('Mouse', char(mousedata{1,1}(mouse)),...
         char(mousedata{1,11}(mouse)),...
         char(mousedata{1,2}(mouse)),Model); %uncomment this when you are ready to analyze whole batch
