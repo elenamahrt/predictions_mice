@@ -75,14 +75,14 @@ for mouse = 1:numMice
     responsePrediction = zeros(yourStim,100);  %100 has to do with Lars' code. Don't change it!
     %Create a preferences structure for the desired experimental data
     prefs = GeneratePreferences_EM('Mouse', char(mousedata{1,1}(mouse)),...
-        char(mousedata{1,11}(mouse)),...
-        char(mousedata{1,2}(mouse)),Model); %uncomment this when you are ready to analyze whole batch
+        char(mousedata{1,9}(mouse)),...
+        char(mousedata{1,2}(mouse)),Model); %first column is mouse number, second column is depth, ninth column is mouse letter
     %     prefs = GeneratePreferences_EM('Mouse', '1327', 'b', '187');
     %     prefs = GeneratePreferences_EM(mousepath, 1);
     %function prefs = GeneratePreferences_EM(animal_number, experiment_letter, cell_depth)
     
     %Set the threshold used for spike detection. 0.11 is the default.
-    prefs.spike_time_peak_threshold = str2num(char(mousedata{1,10}(mouse))); %assuming spike thresholds should be saved in 10th column
+    prefs.spike_time_peak_threshold = str2num(char(mousedata{1,8}(mouse))); % spike thresholds are in 8th column
     %     prefs.spike_time_filter_cutoff = 1; %%%WHAT IS THIS AND WHAT ARE THE RIGHT VALUES FOR THIS?
     %Extract XML metadata and convert to to Matlab structure
     experiment_data = LoadExperimentData(prefs); %Load data file. Did you put it in the right place?
@@ -92,7 +92,7 @@ for mouse = 1:numMice
     % Test Visualization
     %-------------------
     %Specify the test number to visualize, this is a one tone test
-    freqtest_num = str2num(char(mousedata{1,8}(mouse)));    %Generate contour plot of single frequency tuning curve (column 8)
+    freqtest_num = str2num(char(mousedata{1,6}(mouse)));    %Generate contour plot of single frequency tuning curve (column 8)
     if freqtest_num ~= 0
         figname = [savepath prefs.cell_id '_freq.pdf'];
         %                 figname = [mousepath  prefs.cell_id '_freq.pdf'];
@@ -110,8 +110,11 @@ for mouse = 1:numMice
     % VisualizeTestData(experiment_data,prefs,test_num,[0 1 0 0 1])
     %--------------------------------------
     %Specify the test number to visualize, this is a two-tone test
-    firstVocal = str2num(char(mousedata{1,6}(mouse)));
-    lastVocal = str2num(char(mousedata{1,7}(mouse)));
+    firstVocal = str2num(char(mousedata{1,10}(mouse))); %10th column is first test number of sequential tests
+    lastVocal = str2num(char(mousedata{1,11}(mouse))); %11th column is last test number of sequential tests
+    
+    %Want to make predictions on test numbers listed in columns 12:end
+    %(from 12th column to the last column in that row)
     
     % %--------------------
     % % Trace Visualization %WHAT DOES THIS DO??
@@ -157,7 +160,6 @@ for mouse = 1:numMice
             %            disp([ 'error: first vocal (mouse ' num2str(micePrediction(mouse, 1)) ', depth ' num2str(micePrediction(mouse, 2)) ') = ' experiment_data.test(1,firstVocal).trace(1,1).stimulus.vocal_call_file])
             %        end
             for testNum = firstVocal:lastVocal
-                %                 disp 'vocalStr is'
                 vocalStr = experiment_data.test(1,testNum).trace(1,1).stimulus.vocal_call_file;
                 vocalNum=0;
                 
