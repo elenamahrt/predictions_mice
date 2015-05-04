@@ -19,7 +19,7 @@ close all
 startpath = 'C:\Users\emahrt\Documents\mice_predictions\results\';
 savepath = [startpath, Model, '\']
 
-yourMice = 1; %change this to reflect how many cells are in your data set ('mice.txt') that you want to analyze
+yourMice = 13; %change this to reflect how many cells are in your data set ('mice.txt') that you want to analyze
 %%%%%%%% 4/21/2015 = All cells with strictly inhibitory responses were removed. %%%%%%%
 %%%%%%%% Vocalizations were presented at only 15dB attenuation. %%%%%%%
 yourStim = 33; %change this to reflect how many stimuli are in your stimulus set ('stimuli.txt' or 'stimuliDist.txt')
@@ -33,7 +33,7 @@ yourStim = 33; %change this to reflect how many stimuli are in your stimulus set
 %  Read txt files that have stimulus and cell information in them
 
 fid=fopen(mice); %where test information is stored; 'mice' is function input of file name for cell #'s
-mousedata = textscan(fid, '%s %s %s %s %s %s %s %s %s %s %s', yourMice);
+mousedata = textscan(fid, '%s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s', yourMice); %Need to increase number of '%s' if you have more than 33 stimuli
 fclose(fid);
 
 fileID=fopen(stim); %input from function 'stim'
@@ -58,10 +58,10 @@ end
 %                     When you want to run model on distorted stimuli, Low
 %                     Pass filter them; uncomment the stuff below in
 %                     'GenerateStimulus.m' file
-%% --- Low-pass filter ---
+% --- Low-pass filter ---
 %                                     Hd = lowpass40khz;
 %                 vocalization = filter(Hd,vocalization);
-%% ------------------------
+% ------------------------
 
 %Delete cached files and variables
 responsePrediction = [ ];
@@ -92,10 +92,9 @@ for mouse = 1:numMice
     % Test Visualization
     %-------------------
     %Specify the test number to visualize, this is a one tone test
-    freqtest_num = str2num(char(mousedata{1,6}(mouse)));    %Generate contour plot of single frequency tuning curve (column 8)
+    freqtest_num = str2num(char(mousedata{1,6}(mouse)));    %Generate contour plot of single frequency tuning curve (column 6)
     if freqtest_num ~= 0
         figname = [savepath prefs.cell_id '_freq.pdf'];
-        %                 figname = [mousepath  prefs.cell_id '_freq.pdf'];
         
         [unique_frequencies, ...
             unique_attenuations, ...
@@ -109,15 +108,9 @@ for mouse = 1:numMice
     % %Generate image map plots of time-frequency histograms
     % VisualizeTestData(experiment_data,prefs,test_num,[0 1 0 0 1])
     %--------------------------------------
-    %Specify the test number to visualize, this is a two-tone test
-    firstVocal = str2num(char(mousedata{1,10}(mouse))); %10th column is first test number of sequential tests
-    lastVocal = str2num(char(mousedata{1,11}(mouse))); %11th column is last test number of sequential tests
-    
-    %Want to make predictions on test numbers listed in columns 12:end
-    %(from 12th column to the last column in that row)
     
     % %--------------------
-    % % Trace Visualization %WHAT DOES THIS DO??
+    % % Trace Visualization
     % %--------------------
     % %Specify the test and trace number to visualize
     %
@@ -143,7 +136,7 @@ for mouse = 1:numMice
     if freqtest_num ~= 0
         train_data = freqtest_num;
         %Create the model
-        [constrModel, model] = CreateModel(experiment_data,prefs,train_data); %was a 'model' at end. Did I put it there?
+        [constrModel, model] = CreateModel(experiment_data,prefs,train_data);
         %     model = CreateModel(experiment_data,prefs,train_data);
         %     spontRate = model.spontaneous_rate;
         numStr = num2str(train_data);
@@ -152,54 +145,52 @@ for mouse = 1:numMice
         close all
         
         %Visualize prediction made from the model on a specified trace
-        %         firstVocal = CTR_First_vocal;
-        %         lastVocal = CTR_Last_vocal;
-        if (firstVocal ~= 0) && (lastVocal ~= 0)
-            %       if (strcmp(experiment_data.test(1,firstVocal).trace(1,1).stimulus.vocal_call_file, 'A4-11-sylb10.call1'))
-            %        else
-            %            disp([ 'error: first vocal (mouse ' num2str(micePrediction(mouse, 1)) ', depth ' num2str(micePrediction(mouse, 2)) ') = ' experiment_data.test(1,firstVocal).trace(1,1).stimulus.vocal_call_file])
-            %        end
-            for testNum = firstVocal:lastVocal
-                vocalStr = experiment_data.test(1,testNum).trace(1,1).stimulus.vocal_call_file;
-                vocalNum=0;
-                
-                %Assign a number to each of the stimuli used
-                stim = stimdata{1,1};
-                vocalNum = find(strcmp(stim,vocalStr)); %find the index of the location where the matching vocalfile name is in stimdata
-                
-                if vocalNum~=0
-                    test_to_view = testNum;
-                    trace_num = size(experiment_data.test(1,test_to_view).trace, 2);
-                    trace_to_view = trace_num; % trace=1, arrn=40; trace=2, arrn=30; trace=3, arrn=20;
+        
+        for column =1:(length(mousedata)-10) %vocalization test #s start in the 10th column and extend to a maximum of 33 columns beyond that.
+            Vocal = str2num(char(mousedata{1,10+column}(mouse)));
+            if (Vocal ~= 0)
+                for testNum = Vocal
+                    vocalStr = experiment_data.test(1,testNum).trace(1,1).stimulus.vocal_call_file;
+                    vocalNum=0;
                     
-                    [model_errorsL, model_output] = VisualizeTracePredictions(experiment_data, ...
-                        prefs, ...
-                        model, ...
-                        test_to_view, ...
-                        trace_to_view,[]);
-                    numStr = num2str(test_to_view);
-                    figname = [savepath prefs.cell_id '_vocalL_' numStr '.pdf'];
-                    saveas(gcf,figname);
-                    %                                 close all
-                    close force all
-                    micePrediction(mouse, vocalNum+2) = sum(max(model_output,0));
-                    miceError(mouse, vocalNum+2) = model_errorsL;
-                    lmo = length(model_output);
-                    if lmo<100 model_output = [model_output model_output(lmo)*ones(1,100-lmo)]; end %100 has to do with the length of the model; because the model only predicts for the length of the stimulus, not after.
-                    if lmo>100 model_output = model_output(1:100); end
-                    responsePrediction(vocalNum, :) = model_output;
-                    %             prediction( mouse, testNum ) = sum( max(model_output,0))/(size(model_output, 2));
-                    %             [model_errorsLC model_output] = VisualizeTracePredictions(experiment_data, ...
-                    %                                       prefs, ...
-                    %                                       constrModel, ...
-                    %                                       test_to_view, ...
-                    %                                       trace_to_view);
-                    %             numStr = num2str(test_to_view);
-                    % %             figname = ['/Users/robertpa/Desktop/mouseDataFigs/' prefs.cell_id '_vocalLC_' numStr '.pdf'];
-                    % %             saveas(gcf,figname);
-                    close all
-                    display(['prediction = ' num2str(micePrediction(mouse, vocalNum+2 )) ', model_errorsL = ' num2str(model_errorsL)]);
-                    %             display(['model_errorsL = ' num2str(model_errorsL) ', model_errorsLC = ' num2str(model_errorsLC)]);
+                    %Assign a number to each of the stimuli used
+                    stim = stimdata{1,1};
+                    vocalNum = find(strcmp(stim,vocalStr)); %find the index of the location where the matching vocalfile name is in stimdata
+                    
+                    if vocalNum~=0
+                        test_to_view = testNum;
+                        trace_num = size(experiment_data.test(1,test_to_view).trace, 2);
+                        trace_to_view = trace_num; % trace=1, arrn=40; trace=2, arrn=30; trace=3, arrn=20;
+                        
+                        [model_errorsL, model_output] = VisualizeTracePredictions(experiment_data, ...
+                            prefs, ...
+                            model, ...
+                            test_to_view, ...
+                            trace_to_view,[]);
+                        numStr = num2str(test_to_view);
+                        figname = [savepath prefs.cell_id '_vocalL_' numStr '.pdf'];
+                        saveas(gcf,figname);
+                        %                                 close all
+                        close force all
+                        micePrediction(mouse, vocalNum+2) = sum(max(model_output,0));
+                        miceError(mouse, vocalNum+2) = model_errorsL;
+                        lmo = length(model_output);
+                        if lmo<100 model_output = [model_output model_output(lmo)*ones(1,100-lmo)]; end %100 has to do with the length of the model; because the model only predicts for the length of the stimulus, not after.
+                        if lmo>100 model_output = model_output(1:100); end
+                        responsePrediction(vocalNum, :) = model_output;
+                        %             prediction( mouse, testNum ) = sum( max(model_output,0))/(size(model_output, 2));
+                        %             [model_errorsLC model_output] = VisualizeTracePredictions(experiment_data, ...
+                        %                                       prefs, ...
+                        %                                       constrModel, ...
+                        %                                       test_to_view, ...
+                        %                                       trace_to_view);
+                        %             numStr = num2str(test_to_view);
+                        % %             figname = ['/Users/robertpa/Desktop/mouseDataFigs/' prefs.cell_id '_vocalLC_' numStr '.pdf'];
+                        % %             saveas(gcf,figname);
+                        close all
+                        display(['prediction = ' num2str(micePrediction(mouse, vocalNum+2 )) ', model_errorsL = ' num2str(model_errorsL)]);
+                        %             display(['model_errorsL = ' num2str(model_errorsL) ', model_errorsLC = ' num2str(model_errorsLC)]);
+                    end
                 end
             end
         end
@@ -211,4 +202,4 @@ for mouse = 1:numMice
     
 end
 
-disp 'All Done!'
+disp '------- All Done! -------'
