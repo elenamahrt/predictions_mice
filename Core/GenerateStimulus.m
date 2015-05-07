@@ -108,11 +108,7 @@ for test_num = test_nums
                 %                 vocalization = filter(Hd,vocalization);
                 %                 %% ------------------------
                 
-                % for function 'run_predictions_mice.m', change this to an if/then
-                % statement that looks for = if model = linear then SKIP filtering
-                
-
-%              %------------ Low-pass filter ---
+% %              %------------ Low-pass filter ---
                     Hd = lowpass40khz;
                     vocalization = filter(Hd,vocalization);
                     

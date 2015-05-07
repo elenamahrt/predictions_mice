@@ -1,8 +1,10 @@
-function [Model, mice, stim] = run_predictions_mice(Model, mice, stim)
-% function run_predictions_mice(model, mice, stim, HPfilter, LPfilter, errorType)
+function [Model, mice, stim] = run_predictions_mice(dataset, Model, mice, stim)
 
 %INPUT ARGUMENTS
-% model = options are: linear, distorted4, distorted10, distorted20
+% dataset = where you save results. options are: mice_inhib,
+% mice_all, mice_clean, mice_debug
+
+% Model = options are: linear, distorted4, distorted10, distorted20
 
 % mice = name of the .txt file that has your cell test numbers
 
@@ -15,43 +17,27 @@ function [Model, mice, stim] = run_predictions_mice(Model, mice, stim)
 close all
 % clear all
 
-%%%%%%  SET YOUR VARIABLES AND PATHS   %%%%%%
-% startpath = 'C:\Users\emahrt\Documents\mice_predictions\results\';
-% savepath = [startpath, Model, '\']
-% 
-% yourMice = 13; %How many cells do you have? (i.e. how many rows)
-
-% yourStim = 33; %How many stimuli do you have? (i.e. how many rows in 'stimuli.txt' or 'stimuliDist.txt' do you have?)
-% % % Linear = 'stimuli.txt' 1-33 are Jump syllables; 34-82 are 7.5.12 CBA vox;
-% % % Distorted  = 'stimuliDist.txt'; 1-33 are Jump syllables with same
-% name as linear; 34-132 are jump syllables with "Dist" type specified in
-% file name
-
-% numColumns=33+9; %9 cells have cell and TC information, the 33 cells are for the vocalization test numbers (i.e. how many columns are there)
+%%%%%%  SET UP NOTES   %%%%%%
+% Check: Turn on/off HP filters in 'GenerateStimulus.m'
+% Check: how many stimuli are you analyzing? in 'yourStim' variable
+% Check: Which calculation of prediction error do you want to use? in
+% 'VisualizeTracePredictions.m'
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%  Read txt files that have stimulus and cell information in them
-
-% fid=fopen(mice); %where test information is stored; 'mice' is function input of file name for cell #'s
-% % mousedata = textscan(fid, '%s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s', yourMice); %Need to increase number of '%s' if you have more than 33 stimuli
-% mousedata = textscan(fid,'%s %s %s %s %s %s %s %s %s',numColumns,'Delimiter','\t');
-% fclose(fid);
-
-startpath = 'C:\Users\emahrt\Documents\mice_predictions\results\';
+startpath = ['C:\Users\emahrt\Documents\mice_predictions\results\' dataset '\'];
 savepath = [startpath, Model, '\']
 
 %Load your test information
 mousedata = dlmread(mice,'\t');
 
-%Define some parameter and variable sizes 
+%Define some parameter and variable sizes
 numColumns = length(mousedata);
-numMice = size(mousedata);
-numMice = mousedata(1,1);
+numMice = size(mousedata,1);
 
 %Load your stimuli information
 yourStim = 33; %How many stimuli do you have? (i.e. how many rows in 'stimuli.txt' or 'stimuliDist.txt' do you have?)
 fileID=fopen(stim); %input from function 'stim'
-stimdata = textscan(fileID, '%s', yourStim); %Change the last number to reflect the total number of stimuli
+stimdata = textscan(fileID, '%s', yourStim); 
 fclose(fileID);
 
 % Create empty arrays to put model information into
@@ -60,41 +46,28 @@ miceError = zeros(numMice, numColumns);  %This makes an array the same size as t
 sndType = '.call1'; %what is your stimulus file type?
 % sndType = '.wav';
 
-
 if exist('C:\Users\emahrt\Documents\mice_predictions\Output\Mouse')
     rmdir('C:\Users\emahrt\Documents\mice_predictions\Output\Mouse', 's');
 else
 end
-
-
-%===== Insert into GenerateStimulus.m ===
-%                     When you want to run model on distorted stimuli, Low
-%                     Pass filter them; uncomment the stuff below in
-%                     'GenerateStimulus.m' file
-% --- Low-pass filter ---
-%                                     Hd = lowpass40khz;
-%                 vocalization = filter(Hd,vocalization);
-% ------------------------
 
 %Delete cached files and variables
 responsePrediction = [ ];
 dlmwrite(strcat(savepath, '\responsePrediction.txt'), responsePrediction, 'delimiter', '\t', 'precision', '%.4f', '-append')
 
 for mouse = 1:numMice
-        
+    
     responsePrediction = zeros(yourStim,100);  %100 has to do with Lars' code. Don't change it!
-    %Create a preferences structure for the desired experimental data
-%     prefs = GeneratePreferences_EM('Mouse',char(mousedata{1,1}(mouse)),char(mousedata{1,9}(mouse)),char(mousedata{1,2}(mouse)),Model); 
-%         prefs = GeneratePreferences_EM('Mouse',char(mousedata{mouse,1}{1,1}),char(mousedata{mouse,1}{1,9}),char(mousedata{mouse,1}{1,2}),Model); 
-   
-%first column is mouse number, second column is depth, ninth column is mouse letter
-       prefs = GeneratePreferences_EM('Mouse',mousedata(mouse,1),mousedata(mouse,9),mousedata(mouse,2),Model); 
+    %Create a preferences structure for the desired experimental data that
+    %includes test information. First column is mouse number, second column is depth, ninth column is mouse letter
+    
+    prefs = GeneratePreferences_EM('Mouse',mousedata(mouse,1),mousedata(mouse,9),mousedata(mouse,2),Model);
     
     %Set the threshold used for spike detection. 0.11 is the default.
-%     prefs.spike_time_peak_threshold = str2num(char(mousedata{mouse,1}{1,8})); % spike thresholds are in 8th column
-        prefs.spike_time_peak_threshold = mousedata(mouse,8); % spike thresholds are in 8th column
-
-    %     prefs.spike_time_filter_cutoff = 1; %%%WHAT IS THIS AND WHAT ARE THE RIGHT VALUES FOR THIS?
+    prefs.spike_time_peak_threshold = mousedata(mouse,8); % spike thresholds are in 8th column
+    
+    %     prefs.spike_time_filter_cutoff = 1; % not sure what this is for
+    
     %Extract XML metadata and convert to to Matlab structure
     experiment_data = LoadExperimentData(prefs); %Load data file. Did you put it in the right place?
     experiment_data.pst_filename
@@ -103,9 +76,8 @@ for mouse = 1:numMice
     % Test Visualization
     %-------------------
     %Specify the test number to visualize, this is a one tone test
-%     freqtest_num = str2num(char(mousedata{mouse,1}{1,6}));    %Generate contour plot of single frequency tuning curve (column 6)
-        freqtest_num =mousedata(mouse,6);    %Generate contour plot of single frequency tuning curve (column 6)
-
+    freqtest_num =mousedata(mouse,6);    %Generate contour plot of single frequency tuning curve (column 6)
+    
     if freqtest_num ~= 0
         figname = [savepath prefs.cell_id '_freq.pdf'];
         
@@ -136,17 +108,11 @@ for mouse = 1:numMice
     % % VisualizeTraceData(experiment_data,prefs,test_num,trace_num,[0 0 0 1 1 1 1 0 0 0]);
     % %  VisualizeTraceData(experiment_data,prefs,test_num,trace_num,[0 0 0 0 0 0 0 1 1 0]);
     % % end
-    
-    
+        
     % --------------------------------
     % Model Generation and Prediction
     % --------------------------------
     %Specify the tests to use as training data
-%     micePrediction(mouse, 1) = str2num(char(mousedata{mouse,1}{1,1})); %%puts the mouse # in the first column of output .txt files
-%     micePrediction(mouse, 2) = str2num(char(mousedata{mouse,1}{1,2})); %puts the cell depth in the first column of output .txt files
-%     miceError(mouse, 1) = str2num(char(mousedata{mouse,1}{1,1})); %puts the mouse # in the first column of output .txt files
-%     miceError(mouse, 2) = str2num(char(mousedata{mouse,1}{1,2})); %puts the cell depth in the first column of output .txt files
-
     micePrediction(mouse, 1) = mousedata(mouse,1); %%puts the mouse # in the first column of output .txt files
     micePrediction(mouse, 2) = mousedata(mouse,2); %puts the cell depth in the first column of output .txt files
     miceError(mouse, 1) = mousedata(mouse,1); %puts the mouse # in the first column of output .txt files
@@ -164,7 +130,6 @@ for mouse = 1:numMice
         close all
         
         %Visualize prediction made from the model on a specified trace
-        
         for column =1:(numColumns-9) %vocalization test #s start in the 10th column and extend to a maximum of 33 columns beyond that.
             Vocal = mousedata(mouse,9+column);
             if (Vocal ~= 0)
@@ -191,6 +156,7 @@ for mouse = 1:numMice
                         saveas(gcf,figname);
                         %                                 close all
                         close force all
+                        
                         micePrediction(mouse, vocalNum+2) = sum(max(model_output,0));
                         miceError(mouse, vocalNum+2) = model_errorsL;
                         lmo = length(model_output);
