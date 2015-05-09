@@ -138,10 +138,8 @@ for mouse = 1:numMice
             
             testNum = mousedata(mouse,9+column); %grab the test number; mouse is the row and the vocalization test numbers start in the 10th column (thus 9+ column)
             if (testNum ~= 0) %if there is a test number, then do the next step
-%                 if length(testNum) >1
-%                     error('you have more than one test number')
-%                 end
-            %Assign a number to each of the stimuli used
+
+                %Assign a number to each of the stimuli used
                 vocalStr = experiment_data.test(1,testNum).trace(1,1).stimulus.vocal_call_file; %grabs the name of the stimulus file from the Batlab file in testNum
                 vocalNum=0;           
                 stim = stimdata{1,1};
@@ -158,13 +156,14 @@ for mouse = 1:numMice
                         test_to_view, ...
                         trace_to_view,[]);
                     numStr = num2str(test_to_view);
-                    figname = [savepath prefs.cell_id '_vocalL_' numStr '.pdf'];
+                    disp('Figure Name')
+                    figname = [savepath prefs.cell_id '_vocalL_' numStr '.pdf']
                     saveas(gcf,figname);
                     %                                 close all
                     close force all
                     
-                    micePrediction(mouse, vocalNum+2) = sum(max(model_output,0)); % put the value into the mouse' row. The column is the same as the index of the vocalStr. +2 to skip mouse# and depth columns
-                    miceError(mouse, vocalNum+2) = model_errorsL;
+                    micePrediction(mouse, (vocalNum+2)) = sum(max(model_output,0)); % put the value into the mouse' row. The column is the same as the index of the vocalStr. +2 to skip mouse# and depth columns
+                    miceError(mouse, (vocalNum+2)) = model_errorsL;
                     lmo = length(model_output);
                     if lmo<100 model_output = [model_output model_output(lmo)*ones(1,100-lmo)]; end %zero padding; 100 has to do with the length of the model; because the model only predicts for the length of the stimulus, not after.
                     if lmo>100 model_output = model_output(1:100); end
