@@ -21,7 +21,8 @@ close all
 % Check: Turn on/off LP filters in 'GenerateStimulus.m'
 % Check: how many stimuli are you analyzing? in 'yourStim' variable
 % Check: Which calculation of prediction error do you want to use? in
-% 'VisualizeTracePredictions.m'
+% 'VisualizeTracePredictions.m'. Also change the plot legend to say either 'NMSE' or 'NormDist' in this same
+% script!
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 startpath = ['C:\Users\emahrt\Documents\mice_predictions\results\' dataset '\'];
@@ -115,7 +116,6 @@ for mouse = 1:numMice
     % Model Generation and Prediction
     % --------------------------------
     %Specify the tests to use as training data
-    %     disp('mousedata MouseNum and depth')
     micePrediction(mouse, 1) = mousedata(mouse,1); %%puts the mouse # in the first column of output .txt files
     micePrediction(mouse, 2) = mousedata(mouse,2); %puts the cell depth in the first column of output .txt files
     miceError(mouse, 1) = mousedata(mouse,1); %puts the mouse # in the first column of output .txt files
@@ -133,15 +133,14 @@ for mouse = 1:numMice
         close all
         
         %Visualize prediction made from the model on a specified trace
-        %         for column =1:(length(mousedata)-9) %vocalization test #s start in the 10th column and extend to a maximum of 33 columns beyond that.
         for column =1:yourStim % loop through all the vocalization test numbers.
             
             testNum = mousedata(mouse,9+column); %grab the test number; mouse is the row and the vocalization test numbers start in the 10th column (thus 9+ column)
             if (testNum ~= 0) %if there is a test number, then do the next step
-
+                
                 %Assign a number to each of the stimuli used
                 vocalStr = experiment_data.test(1,testNum).trace(1,1).stimulus.vocal_call_file; %grabs the name of the stimulus file from the Batlab file in testNum
-                vocalNum=0;           
+                vocalNum=0;
                 stim = stimdata{1,1};
                 vocalNum = find(strcmp(stim,vocalStr)); %find the index of the location where the matching vocalfile name is in stimdata
                 

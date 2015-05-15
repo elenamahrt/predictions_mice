@@ -67,7 +67,9 @@ if exist('animal_type','var')
     %not! (In 'GenerateStimulus.m' script)
     
     stimPath = ['stimuli\' Model '\'];
-    
+
+%     stimPath = ['stimuli\distorted4\'];
+
     dataPath = 'data\';
     extractDataPath = 'data\extractedData\';
     

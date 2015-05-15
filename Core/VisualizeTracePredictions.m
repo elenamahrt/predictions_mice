@@ -114,12 +114,12 @@ for model_num = 1:num_models
     output = ProcessModel(model, input_data_4_prediction);
     model_output(model_num,:) = output;
     
-    %     model_errors(model_num) = mean((output_data_4_plot - max(output,0)).^2)/mean(output_data_4_plot.^2); %Lars' = Normalized Squared Error.
+        model_errors(model_num) = mean((output_data_4_plot - max(output,0)).^2)/mean(output_data_4_plot.^2); %Lars' = Normalized Squared Error.
     
     %     model_errors(model_num) = mean((output_data_4_plot - max(output,0)).^2)/sqrt(mean(output_data_4_plot.^2)*mean(max(output,0).^2)); % 4/23/15 Get NMSE's around 3 for linear predictions.
     %     model_errors(model_num) = mean((output_data_4_plot - max(output,0)).^2)/(mean(output_data_4_plot)*mean(max(output,0)));
     
-    model_errors(model_num) = mean(output_data_4_plot.*max(output,0))/sqrt(mean(output_data_4_plot.^2)*mean(max(output,0).^2));
+%     model_errors(model_num) = mean(output_data_4_plot.*max(output,0))/sqrt(mean(output_data_4_plot.^2)*mean(max(output,0).^2));
     %     % Pat's = Is a measure of Normalized Distance. Reduces the amount of
     %     error associated with reporting values associated with large actual
     %     responses that are not predicted.
@@ -157,8 +157,8 @@ if visualize_data
     entry_num = length(legend_str)+1;
     for model_num = 1:num_models
         model = models{model_num};
-        %         legend_str{entry_num} = [model.label ' Model Prediction. NMSE: ' num2str(model_errors(model_num),3)]; %Change this to 'normalized distance' if you use Pat's equation
-        legend_str{entry_num} = [model.label ' Model Prediction. NormDistance: ' num2str(model_errors(model_num),3)]; %Change this to 'normalized distance' if you use Pat's equation
+                legend_str{entry_num} = [model.label ' Model Prediction. NMSE: ' num2str(model_errors(model_num),3)]; %Change this to 'normalized distance' if you use Pat's equation
+%         legend_str{entry_num} = [model.label ' Model Prediction. NormDistance: ' num2str(model_errors(model_num),3)]; %Change this to 'normalized distance' if you use Pat's equation
         
         entry_num = entry_num + 1;
     end

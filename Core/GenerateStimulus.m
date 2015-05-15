@@ -103,17 +103,19 @@ for test_num = test_nums
                 %Attenuate the signal
                 vocalization = dbAttenuate(vocalization, stim.attenuation);
                 
-                %                 %% --- High-pass filter ---
-                %                 Hd = highpass40khz;
-                %                 vocalization = filter(Hd,vocalization);
+%                                 %% --- High-pass filter ---
+                                Hd = highpass40khz;
+                                vocalization = filter(Hd,vocalization);
                 %                 %% ------------------------
                 
 % %              %------------ Low-pass filter ---
-                    Hd = lowpass40khz;
-                    vocalization = filter(Hd,vocalization);
-                    
-                    Hd = lowpass40khz;
-                    vocalization = filter(Hd,vocalization);
+%                     Hd = lowpass40khz;
+%                     vocalization = filter(Hd,vocalization);
+%                     
+%                     Hd = lowpass40khz;
+%                     vocalization = filter(Hd,vocalization);
+% look for defined time HP filtering ability --> can I filter out the
+% clicks occuring the first few ms before the stim onset? 
 %             % ------------------------
 
                 
