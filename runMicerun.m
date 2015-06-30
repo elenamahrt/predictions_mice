@@ -112,17 +112,13 @@ run_predictions_mice('mice_examples', 'linear', 'mice_examples.txt', 'stimuli.tx
 %% DeBug Models
 % % what/where is rise/fall for reading spectrograms? Is it added as part
 % of the model process? no rise/fall could be adding a click
-clear all
-run_predictions_mice('mice_debug', 'distorted4', 'mice_debug.txt', 'stimuli.txt')
-% % %%
-% % clear all
-% run_predictions_mice('mice_debug', 'distorted10', 'mice_debug.txt', 'stimuli.txt')
-% 
+
 % clear all
-% run_predictions_mice('mice_debug', 'distorted20', 'mice_debug.txt', 'stimuli.txt')
+% run_predictions_mice('mice_debug', 'distorted4', 'mice_debug.txt', 'stimuli.txt')
+
 % %%
-% clear all
-% run_predictions_mice('mice_debug', 'linear', 'mice_debug.txt', 'stimuli.txt')
+clear all
+run_predictions_mice('mice_debug', 'linear', 'mice_debug.txt', 'stimuli.txt')
 %%
 makePlots('mice_clean', 'Clean TCs')
 %%

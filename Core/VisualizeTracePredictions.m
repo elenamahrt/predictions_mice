@@ -157,8 +157,8 @@ if visualize_data
     entry_num = length(legend_str)+1;
     for model_num = 1:num_models
         model = models{model_num};
-%                 legend_str{entry_num} = [model.label ' Model Prediction. NMSE: ' num2str(model_errors(model_num),3)]; %Change this to 'normalized distance' if you use Pat's equation
-        legend_str{entry_num} = [model.label ' Model Prediction. NormDist: ' num2str(model_errors(model_num),3)]; %Change this to 'normalized distance' if you use Pat's equation
+%                 legend_str{entry_num} = [model.label ' Model Prediction. NMSE: ' num2str(model_errors(model_num),3)]; 
+        legend_str{entry_num} = [model.label ' Model Prediction. NormDist: ' num2str(model_errors(model_num),3)]; 
         
         entry_num = entry_num + 1;
     end

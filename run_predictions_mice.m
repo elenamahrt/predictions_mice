@@ -49,7 +49,7 @@ miceError = zeros(numMice, numColumns);  %This makes an array the same size as t
 % sndType = '.call1'; %what is your stimulus file type?
 % sndType = '.wav';
 
-if exist('C:\Users\emahrt\Documents\mice_predictions\Output\Mouse')
+if exist('C:\Users\emahrt\Documents\mice_predictions\Output\Mouse');
     rmdir('C:\Users\emahrt\Documents\mice_predictions\Output\Mouse', 's');
 else
 end
@@ -64,7 +64,13 @@ for mouse = 1:numMice
     %Create a preferences structure for the desired experimental data that
     %includes test information. First column is mouse number, second column is depth, ninth column is mouse letter
     
-    prefs = GeneratePreferences_EM('Mouse',mousedata(mouse,1),mousedata(mouse,9),mousedata(mouse,2),Model);
+    prefs = GeneratePreferences_EM('Mouse',...
+        mousedata(mouse,1),... %Mouse #
+        mousedata(mouse,9),... %Mouse letter
+        mousedata(mouse,2),... % Cell depth
+        Model,... %what model is it and thus where should it save results (linear vs distorted)
+        mousedata(mouse,5),... %response time start
+        mousedata(mouse,6)); %response time stop
     
     %Set the threshold used for spike detection. 0.11 is the default.
     prefs.spike_time_peak_threshold = mousedata(mouse,8); % spike thresholds are in 8th column
@@ -73,13 +79,14 @@ for mouse = 1:numMice
     
     %Extract XML metadata and convert to to Matlab structure
     experiment_data = LoadExperimentData(prefs); %Load data file. Did you put it in the right place?
+    disp '-----Extracting File-----'
     experiment_data.pst_filename
     
     %-------------------
     % Test Visualization
     %-------------------
     %Specify the test number to visualize, this is a one tone test
-    freqtest_num =mousedata(mouse,6);    %Generate contour plot of single frequency tuning curve (column 6)
+    freqtest_num =mousedata(mouse,7);    %Generate contour plot of single frequency tuning curve (column 7)
     
     if freqtest_num ~= 0
         figname = [savepath prefs.cell_id '_freq.pdf'];

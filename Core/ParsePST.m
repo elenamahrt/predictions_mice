@@ -34,6 +34,7 @@ line_num = 1;
 %Total lines in the PST file
 num_lines = length(lines);
 %Offset into the raw data file
+% is this in ms? 
 raw_pos = 0;
 
 %Collect experiment-wide data from ID section
@@ -63,11 +64,10 @@ while line_num <= num_lines
     experiment.test(test_num).full_testtype = full_testtype;
     %Store the beginning location of the test
     line_num = line_num + 1;
-    %Extract the test paramewters
+    %Extract the test parameters
     test_data = textscan(lines{line_num},'%n %s %n %n %n %n %s %n %n %n %n %n %n',1);
     num_traces = test_data{1};
     line_num = line_num + 1;
-    
     %Not even sure what these test are. Not necessary?
 %     vocal_call_io_test_number = textscan(lines{line_num},'%n');
 %     line_num = line_num + 1;
@@ -83,7 +83,10 @@ while line_num <= num_lines
     line_num = line_num + 1;
     
     %Get the position of the beginning of the test in the raw data file
-    experiment.test(test_num).offset_in_raw_file = raw_pos;
+%  [EM]   You want to window your tuning curves. To do this, this might be an area you can 
+% define the start and end times of the recording you want to load.
+
+experiment.test(test_num).offset_in_raw_file = raw_pos;
     for trace_num = 1:num_traces
         %Get the trace data for this test
         trace_data = textscan(lines{line_num},'%n');
@@ -95,7 +98,7 @@ while line_num <= num_lines
         samplerate_da = trace_data(2);
         samplerate_ad = trace_data(4);
         duration = trace_data(5);
-%         duration = 100;
+
         points = samplerate_ad/1000*duration;
         experiment.test(test_num).trace(trace_num).record_duration = duration;
         experiment.test(test_num).trace(trace_num).samplerate_da = samplerate_da;

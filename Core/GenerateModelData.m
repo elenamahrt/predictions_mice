@@ -92,8 +92,8 @@ rms_pressure_power = cell(max(test_nums),100);
 total_input_rows = 0;
 %Use the specified model time resolution when calculating the spectrograms
 prefs.spectrogram_time_samples_per_millisecond = prefs.model_time_samples_per_millisecond;
-disp('prefs model time samples per milli from GenerateModelData')
-prefs.model_time_samples_per_millisecond
+% disp('prefs model time samples per milli from GenerateModelData')
+prefs.model_time_samples_per_millisecond;
 prefs.histogram_bin_width = 1/prefs.model_time_samples_per_millisecond;
 for test_num = test_nums
     test = experiment_data.test(test_num);

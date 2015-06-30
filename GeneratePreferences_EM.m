@@ -2,7 +2,9 @@ function prefs = GeneratePreferences_EM(animal_type, ...
     animal_string, ...
     experiment_string, ...
     cell_string,...
-    Model)
+    Model,...
+    respStart,...
+    respStop)
 %
 %function prefs = GeneratePreferences(animal_number,
 %                                     experiment_letter,
@@ -32,6 +34,9 @@ animal_type = num2str(animal_type);
 animal_string= num2str(animal_string);
 experiment_string= num2str(experiment_string);
 cell_string= num2str(cell_string);
+%Save the start and stop of the evoked response times
+prefs.respStart = respStart;
+prefs.respStop = respStop;
 
 if exist('animal_type','var')
     %Test description
@@ -89,7 +94,7 @@ if exist('animal_type','var')
     prefs.cache_dir = [prefs.output_data_filepath '\cache'];
     prefs.cell_id = [animal_type animal_string experiment_string '_' cell_string];
     prefs.cell_id4_plot = prefs.cell_id; prefs.cell_id4_plot(strfind(prefs.cell_id4_plot,'_')) = '.';
-    prefs.pst_data_filepath = [base_batlab_data_path '\' animal_type '' animal_string '\' animal_type animal_string experiment_string '.pst'];;
+    prefs.pst_data_filepath = [base_batlab_data_path '\' animal_type '' animal_string '\' animal_type animal_string experiment_string '.pst'];
     
     %Generate the required directories for processing
     warning off
