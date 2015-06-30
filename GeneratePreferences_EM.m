@@ -67,9 +67,6 @@ if exist('animal_type','var')
     %not! (In 'GenerateStimulus.m' script)
     
     stimPath = ['stimuli\' Model '\'];
-
-%     stimPath = ['stimuli\distorted4\'];
-
     dataPath = 'data\';
     extractDataPath = 'data\extractedData\';
     
@@ -110,7 +107,7 @@ prefs.dB_SPL_ref = 0.00002;
 %16-bit audio dynamic range
 prefs.dbRange = 96.3296;
 %Approximate maximum output of speaker in dB SPL
-prefs.dbMax = 115;
+prefs.dbMax = 100;
 %Approximate maximum output of speaker in dB SPL minus maximum dynamic range of 16 bit audio.
 % prefs.dbMin = dbMax-dbRange;
 prefs.dbMin = 0;
@@ -219,9 +216,9 @@ prefs.colormap = jet;prefs.colormap_name = 'jet';
 % prefs.colormap = hot;prefs.colormap_name = 'hot';
 % prefs.colormap = gray;prefs.colormap_name = 'gray';
 % prefs.colormap = gray;prefs.colormap_name = 'bone';
-% prefs.colormap = colorspiral;prefs.colormap_name = 'colorspiral';
+% prefs.colormap = parula;prefs.colormap_name = 'parula';
 % prefs.colormap = flipud(prefs.colormap); %Use this to reverse colormap
-% prefs.colormap = brighten(prefs.colormap,0.3);
+% prefs.colormap = brighten(prefs.colormap, .3); %to make colors brighter, # should be 0 to 1; to make darker # should be -1 to 0
 if isempty(figure_exists)
     close;
 end

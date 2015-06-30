@@ -343,7 +343,7 @@ if plots(2)
         bar(histogram_bin_centers, histogram,'hist');
         hold off
         h = findobj(gca,'Type','patch');
-        set(h,'FaceColor',0.5*[1 1 1],'EdgeColor',0.5*[1 1 1]);
+        set(h,'FaceColor',0.5*[1 1 1],'EdgeColor',0.5*[1 1 1]); %If you want to change color of the histogram, do it here. 
         legend_strs{1,length(legend_strs)+1} = ['PSTH (mean spikes / ' num2str(prefs.histogram_bin_width,2) ' ms bin)'];
     end
 
@@ -507,7 +507,7 @@ if exist('output_path','var') && ~isempty(output_path)
         image_format = 'pdf'; %default
     end
     if ~exist('resolution')
-        resolution = 300;
+        resolution = 600;
     end
 %     saveas(f,output_path,'pdf');
 %     PrintFigure(path,image_format,5,7,resolution,f);

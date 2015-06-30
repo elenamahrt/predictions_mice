@@ -33,7 +33,7 @@ mousedata = dlmread(mice,'\t');
 
 
 %Load your stimuli information
-yourStim = 33; %How many stimuli do you have? (i.e. how many rows in 'stimuli.txt' or 'stimuliDist.txt' do you have?)
+yourStim = 33; %How many stimuli do you have? (i.e. how many rows in 'stimuli.txt' or 'stimuliDist.txt' do you have?) Default should be 33, but there are 72 for LP_mice (as of 6/11/2015), and 82 if you run the regular 33 jump syllables and Pat's 49 7.5.12 vocs
 
 fileID=fopen(stim); %input from function 'stim'
 stimdata = textscan(fileID, '%s', yourStim);
@@ -155,8 +155,8 @@ for mouse = 1:numMice
                         test_to_view, ...
                         trace_to_view,[]);
                     numStr = num2str(test_to_view);
-                    disp('Figure Name')
-                    figname = [savepath prefs.cell_id '_vocalL_' numStr '.pdf']
+%                     disp('Figure Name')
+                    figname = [savepath prefs.cell_id '_vocalL_' numStr '.pdf'];
                     saveas(gcf,figname);
                     %                                 close all
                     close force all

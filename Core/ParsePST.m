@@ -95,6 +95,7 @@ while line_num <= num_lines
         samplerate_da = trace_data(2);
         samplerate_ad = trace_data(4);
         duration = trace_data(5);
+%         duration = 100;
         points = samplerate_ad/1000*duration;
         experiment.test(test_num).trace(trace_num).record_duration = duration;
         experiment.test(test_num).trace(trace_num).samplerate_da = samplerate_da;

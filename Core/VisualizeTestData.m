@@ -72,7 +72,7 @@ alpha = 0.01;
 % image_format = 'epsc2'; %Default
 if exist('output_path', 'var')
     if ~exist('resolution', 'var')
-        resolution = 300;
+        resolution = 600;
     end
     if exist('saveFormat', 'var')
         image_format = saveFormat;

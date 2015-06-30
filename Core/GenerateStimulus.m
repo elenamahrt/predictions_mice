@@ -104,11 +104,11 @@ for test_num = test_nums
                 vocalization = dbAttenuate(vocalization, stim.attenuation);
                 
 %                                 %% --- High-pass filter ---
-                                Hd = highpass40khz;
-                                vocalization = filter(Hd,vocalization);
+%                                 Hd = highpass40khz;
+%                                 vocalization = filter(Hd,vocalization);
                 %                 %% ------------------------
                 
-% %              %------------ Low-pass filter ---
+%              %------------ Low-pass filter ---
 %                     Hd = lowpass40khz;
 %                     vocalization = filter(Hd,vocalization);
 %                     
